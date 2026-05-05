@@ -31,7 +31,7 @@ export default function HeroHeadlines() {
           className="absolute inset-0"
         >
           <h1
-            className="font-titillium font-bold text-[32px] md:text-[52px] text-white leading-[1.1]"
+            className="font-titillium font-bold text-[36px] md:text-[58px] text-white leading-[1.1]"
           >
             {HEADLINES[index].before}
             <br />

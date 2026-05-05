@@ -6,12 +6,15 @@ import TalentForm from "./TalentForm";
 
 export default function HeroSection() {
   return (
-    <section className="relative w-full h-screen overflow-hidden flex items-center">
+    <section className="relative w-full min-h-screen overflow-hidden flex items-center">
       <VideoBackground />
 
-      {/* Content */}
-      <div className="relative z-10 w-full h-full flex items-center px-6 md:px-12 pt-16">
-        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-12">
+      {/* Content — pt-16 to clear navbar, items-center for vertical centering */}
+      <div
+        className="relative z-10 w-full flex items-center px-6 md:px-12"
+        style={{ paddingTop: "64px", minHeight: "100vh" }}
+      >
+        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16 py-12">
           {/* Left column */}
           <div className="flex-[3] flex flex-col justify-center">
             <HeroHeadlines />
@@ -45,9 +48,11 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right column */}
-          <div className="flex-[2] w-full md:w-auto max-w-md">
-            <TalentForm />
+          {/* Right column — max-w-[420px], vertically centered */}
+          <div className="flex-[2] w-full flex items-center justify-center md:justify-end">
+            <div className="w-full" style={{ maxWidth: "420px" }}>
+              <TalentForm />
+            </div>
           </div>
         </div>
       </div>
