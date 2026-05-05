@@ -24,42 +24,48 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-50 h-16 flex items-center justify-between px-6 md:px-12 transition-shadow duration-300 ${
+        className={`fixed top-0 left-0 w-full z-50 h-16 flex items-center transition-shadow duration-300 ${
           scrolled ? "shadow-lg" : ""
         }`}
         style={{ backgroundColor: "#F5B800" }}
       >
-        {/* Logo */}
-        <div className="flex flex-col leading-tight">
-          <span className="font-titillium font-bold text-[26px] text-[#0A0A0A]">
-            log.lab<span style={{ color: scrolled ? "#F5B800" : "#0A0A0A" }}>.</span>
-          </span>
-          <span className="font-titillium text-[10px] text-[#3a3a3a] -mt-1">
-            Tecnologia que transforma
-          </span>
-        </div>
-
-        {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link}
-              href="#"
-              className="font-titillium font-semibold text-sm text-[#0A0A0A] relative group"
-            >
-              {link}
-              <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#0A0A0A] transition-all duration-300 group-hover:w-full" />
-            </a>
-          ))}
-        </div>
-
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden text-[#0A0A0A]"
-          onClick={() => setDrawerOpen(true)}
+        {/* Inner boxed container — matches HeroSection max-width */}
+        <div
+          className="w-full flex items-center justify-between px-6 md:px-12"
+          style={{ maxWidth: "1280px", margin: "0 auto" }}
         >
-          <Menu size={28} />
-        </button>
+          {/* Logo */}
+          <div className="flex flex-col leading-tight">
+            <span className="font-titillium font-bold text-[26px] text-[#0A0A0A]">
+              log.lab<span style={{ color: scrolled ? "#F5B800" : "#0A0A0A" }}>.</span>
+            </span>
+            <span className="font-titillium text-[10px] text-[#3a3a3a] -mt-1">
+              Tecnologia que transforma
+            </span>
+          </div>
+
+          {/* Desktop links */}
+          <div className="hidden md:flex items-center gap-8">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link}
+                href="#"
+                className="font-titillium font-semibold text-sm text-[#0A0A0A] relative group"
+              >
+                {link}
+                <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#0A0A0A] transition-all duration-300 group-hover:w-full" />
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile hamburger */}
+          <button
+            className="md:hidden text-[#0A0A0A]"
+            onClick={() => setDrawerOpen(true)}
+          >
+            <Menu size={28} />
+          </button>
+        </div>
       </nav>
 
       {/* Mobile drawer */}

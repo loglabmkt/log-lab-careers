@@ -9,14 +9,18 @@ export default function HeroSection() {
     <section className="relative w-full min-h-screen overflow-hidden flex items-center">
       <VideoBackground />
 
-      {/* Content — pt-16 to clear navbar, items-center for vertical centering */}
+      {/* Outer wrapper: full-width, clears navbar, vertically centered */}
       <div
-        className="relative z-10 w-full flex items-center px-6 md:px-12"
+        className="relative z-10 w-full flex items-center"
         style={{ paddingTop: "64px", minHeight: "100vh" }}
       >
-        <div className="w-full max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-10 md:gap-16 py-12">
+        {/* Boxed container — same max-width as Navbar */}
+        <div
+          className="w-full flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16 py-12 px-6 md:px-12"
+          style={{ maxWidth: "1280px", margin: "0 auto" }}
+        >
           {/* Left column */}
-          <div className="flex-[3] flex flex-col justify-center">
+          <div style={{ flex: 1, maxWidth: "520px" }}>
             <HeroHeadlines />
 
             <motion.p
@@ -48,11 +52,9 @@ export default function HeroSection() {
             </motion.div>
           </div>
 
-          {/* Right column — max-w-[420px], vertically centered */}
-          <div className="flex-[2] w-full flex items-center justify-center md:justify-end">
-            <div className="w-full" style={{ maxWidth: "420px" }}>
-              <TalentForm />
-            </div>
+          {/* Right column — fixed width, flex-shrink: 0 */}
+          <div style={{ width: "420px", flexShrink: 0 }} className="w-full md:w-auto">
+            <TalentForm />
           </div>
         </div>
       </div>
