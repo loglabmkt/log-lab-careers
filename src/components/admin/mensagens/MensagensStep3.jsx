@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { useWhatsApp } from "../../../hooks/useWhatsApp";
 
 function fmtWA(n = "") {
   const d = n.replace(/\D/g, "");
@@ -11,9 +11,10 @@ function fmtWA(n = "") {
 
 export default function MensagensStep3({ destinatarios, template, mensagem, onBack, onFinish }) {
   const [state, setState] = useState("idle"); // idle | sending | done | error
-  const [progress, setProgress] = useState(0);
   const [resultado, setResultado] = useState(null);
   const [saving, setSaving] = useState(false);
+  const { sendDisparo, progress: waProgress } = useWhatsApp();
+  const progress = waProgress.total > 0 ? Math.round((waProgress.atual / waProgress.total) * 100) : 0;
 
   const personalizar = (dest) => mensagem
     .replace(/\[Nome\]/g, dest.nome || "")
@@ -28,35 +29,21 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
 
   const handleEnviar = async () => {
     setState("sending");
-    setProgress(0);
 
     // Salvar disparo antes de enviar
-    const disparoRes = await onFinish({ status: "enviando" });
-    const disparoId = disparoRes?.id || null;
+    await onFinish({ status: "enviando" });
 
-    // Simular progresso animado enquanto envia
-    const progressInterval = setInterval(() => {
-      setProgress(p => Math.min(p + 2, 90));
-    }, 200);
-
-    const res = await base44.functions.invoke("sendDisparoWhatsApp", {
-      disparoId,
+    const data = await sendDisparo({
       destinatarios,
-      mensagemTemplate: mensagem,
       templateSid: template?.templateSid || null,
     });
 
-    clearInterval(progressInterval);
-    setProgress(100);
-
-    const data = res.data;
-    setResultado(data);
-
-    if (!data || data.error) {
-      setState("error");
-    } else {
-      setState("done");
-    }
+    setResultado({
+      totalEnviados: data.enviados,
+      totalErros: data.erros,
+      resultados: data.resultados,
+    });
+    setState("done");
   };
 
   // ── Estado: enviando ──

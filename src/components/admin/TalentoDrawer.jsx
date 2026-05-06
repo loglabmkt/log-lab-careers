@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Check, CheckCircle2, XCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useWhatsApp } from "../../hooks/useWhatsApp";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -9,8 +10,8 @@ export default function TalentoDrawer({ talento, onClose, onUpdate }) {
   const [saving, setSaving] = useState(false);
   const [templates, setTemplates] = useState([]);
   const [selectedTplId, setSelectedTplId] = useState("");
-  const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null); // null | 'ok' | 'error' | string
+  const { sending, sendIndividual } = useWhatsApp();
 
   useEffect(() => {
     base44.functions.invoke("getTemplates", {}).then(res => {
@@ -23,21 +24,14 @@ export default function TalentoDrawer({ talento, onClose, onUpdate }) {
   const handleSendWhatsApp = async () => {
     const tpl = templates.find(t => t.id === selectedTplId);
     if (!tpl) return;
-    setSending(true);
     setSendResult(null);
-    const mensagem = (tpl.conteudo || "")
-      .replace(/\[Nome\]/g, talento.nome || "")
-      .replace(/\[Area\]/g, talento.areaInteresse || "")
-      .replace(/\[LinkSite\]/g, "https://log-lab-careers.base44.app")
-      .replace(/\[[^\]]+\]/g, m => m);
 
-    const res = await base44.functions.invoke("sendWhatsAppMessage", {
-      to: talento.whatsapp,
-      mensagem,
+    const res = await sendIndividual({
+      talento: { nome: talento.nome, whatsapp: talento.whatsapp, area: talento.areaInteresse },
       templateSid: tpl.templateSid || null,
     });
-    setSending(false);
-    setSendResult(res.data?.success ? "ok" : (res.data?.error || "Erro desconhecido"));
+
+    setSendResult(res.success ? "ok" : (res.error || "Erro desconhecido"));
   };
 
   const handleSaveObs = async () => {
