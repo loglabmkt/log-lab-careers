@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,7 +20,7 @@ function NavLink({ label, id, active, onClick }) {
   return (
     <a
       href={id ? `#${id}` : "#"}
-      onClick={(e) => { if (id) { e.preventDefault(); onClick(id); } }}
+      onClick={(e) => { e.preventDefault(); if (id) onClick(id); }}
       className="relative font-inter font-semibold text-sm flex items-center justify-center"
       style={{
         color: isHighlighted ? "#F5B800" : "#0A0A0A",
@@ -56,36 +56,42 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // IntersectionObserver for active section
+  // IntersectionObserver — threshold 0.5 for accurate active detection
   useEffect(() => {
-    const observers = [];
-    SECTION_IDS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { threshold: 0.4 }
-      );
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return () => observers.forEach((o) => o.disconnect());
+    const timeout = setTimeout(() => {
+      const observers = [];
+      SECTION_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const obs = new IntersectionObserver(
+          ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+          { threshold: 0.5 }
+        );
+        obs.observe(el);
+        observers.push(obs);
+      });
+      return () => observers.forEach((o) => o.disconnect());
+    }, 300);
+    return () => clearTimeout(timeout);
   }, []);
 
-  const scrollTo = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const handleNavClick = (e, targetId) => {
+    e.preventDefault();
+    const el = document.getElementById(targetId);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
     setDrawerOpen(false);
   };
 
   return (
     <>
       <nav
-        className="fixed top-0 left-0 w-full z-50 h-16 flex items-center"
+        className="fixed top-0 left-0 w-full z-50 flex items-center"
         style={{
+          height: "72px",
           backgroundColor: scrolled ? "rgba(255,255,255,0.80)" : "#FFFFFF",
           backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
           WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
@@ -95,14 +101,14 @@ export default function Navbar() {
       >
         <div
           className="w-full flex items-center justify-between"
-          style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px" }}
+          style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 64px" }}
         >
-          {/* Logo */}
+          {/* Logo image */}
           <img
             src="https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/20903d9b8_fb3797ffe_logotipo_loglab1.png"
             alt="Log Lab"
-            style={{ height: "40px", width: "auto", cursor: "pointer" }}
-            onClick={() => scrollTo("inicio")}
+            style={{ height: "44px", width: "auto", cursor: "pointer" }}
+            onClick={(e) => handleNavClick(e, "inicio")}
           />
 
           {/* Desktop: links + CTA */}
@@ -113,12 +119,15 @@ export default function Navbar() {
                 label={link.label}
                 id={link.id}
                 active={link.id === activeSection}
-                onClick={scrollTo}
+                onClick={(id) => {
+                  const el = document.getElementById(id);
+                  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }}
               />
             ))}
             <a
               href="#vagas"
-              onClick={(e) => { e.preventDefault(); scrollTo("vagas"); }}
+              onClick={(e) => handleNavClick(e, "vagas")}
               className="font-inter font-semibold text-sm"
               style={{
                 backgroundColor: "#F5B800",
@@ -167,14 +176,14 @@ export default function Navbar() {
                     key={link.label}
                     href={link.id ? `#${link.id}` : "#"}
                     className="font-inter font-semibold text-lg text-[#0A0A0A]"
-                    onClick={(e) => { if (link.id) { e.preventDefault(); scrollTo(link.id); } else setDrawerOpen(false); }}
+                    onClick={(e) => { if (link.id) { handleNavClick(e, link.id); } else setDrawerOpen(false); }}
                   >
                     {link.label}
                   </a>
                 ))}
                 <a
                   href="#vagas"
-                  onClick={(e) => { e.preventDefault(); scrollTo("vagas"); }}
+                  onClick={(e) => handleNavClick(e, "vagas")}
                   className="font-inter font-semibold text-base text-center rounded-lg"
                   style={{ backgroundColor: "#F5B800", color: "#0A0A0A", padding: "12px 22px", marginTop: "16px", textDecoration: "none", display: "block" }}
                 >

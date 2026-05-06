@@ -143,11 +143,10 @@ export default function CulturaSection() {
 
   return (
     <section
-      id="cultura"
       style={{
+        width: "100%",
         background: "linear-gradient(135deg, #fafafa 0%, #fff8e7 50%, #fafafa 100%)",
-        paddingTop: "100px",
-        paddingBottom: "100px",
+        padding: "100px 0",
         position: "relative",
         overflow: "hidden",
       }}

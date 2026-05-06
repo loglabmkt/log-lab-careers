@@ -5,10 +5,16 @@ import CulturaSection from "../components/landing/CulturaSection";
 
 export default function Home() {
   return (
-    <div className="font-titillium">
+    <div className="font-inter">
       <Navbar />
-      <HeroSection />
-      <CulturaSection />
+
+      <section id="inicio">
+        <HeroSection />
+      </section>
+
+      <section id="cultura" style={{ minHeight: "100vh", display: "flex", alignItems: "center" }}>
+        <CulturaSection />
+      </section>
     </div>
   );
 }
