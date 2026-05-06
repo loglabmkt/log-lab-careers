@@ -12,7 +12,7 @@ export default function Home() {
         <HeroSection />
       </section>
 
-      <section id="cultura" style={{ minHeight: "100vh", display: "flex", alignItems: "stretch" }}>
+      <section id="cultura" style={{ minHeight: "100vh", display: "flex", alignItems: "stretch", background: "linear-gradient(135deg, #faf8f2 0%, #fff8e7 50%, #faf8f2 100%)", margin: 0, padding: 0 }}>
         <CulturaSection />
       </section>
     </div>

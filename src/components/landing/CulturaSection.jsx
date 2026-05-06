@@ -151,10 +151,12 @@ export default function CulturaSection() {
       style={{
         width: "100%",
         minHeight: "100vh",
+        margin: 0,
+        padding: 0,
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #fafafa 0%, #fff8e7 50%, #fafafa 100%)",
+        background: "linear-gradient(135deg, #faf8f2 0%, #fff8e7 50%, #faf8f2 100%)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -199,7 +201,7 @@ export default function CulturaSection() {
       />
 
       {/* Container */}
-      <div style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "80px 48px", position: "relative", zIndex: 1 }} className="px-6 md:px-12">
+      <div style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }} className="px-6 md:px-12">
         <div className="flex flex-col md:flex-row gap-20 items-center">
 
           {/* LEFT COLUMN */}
