@@ -85,6 +85,11 @@ function DifferentialCard({ icon: Icon, title, text, delay }) {
         transform: hovered ? "translateY(-6px) scale(1.01)" : "translateY(0) scale(1)",
         transition: "all 400ms cubic-bezier(0.34, 1.56, 0.64, 1)",
         cursor: "default",
+        minHeight: "180px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
       }}
     >
       <div
@@ -145,8 +150,11 @@ export default function CulturaSection() {
     <section
       style={{
         width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
         background: "linear-gradient(135deg, #fafafa 0%, #fff8e7 50%, #fafafa 100%)",
-        padding: "100px 0",
         position: "relative",
         overflow: "hidden",
       }}
@@ -191,8 +199,8 @@ export default function CulturaSection() {
       />
 
       {/* Container */}
-      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }} className="px-6 md:px-12">
-        <div className="flex flex-col md:flex-row gap-16 items-start">
+      <div style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "80px 48px", position: "relative", zIndex: 1 }} className="px-6 md:px-12">
+        <div className="flex flex-col md:flex-row gap-20 items-center">
 
           {/* LEFT COLUMN */}
           <motion.div
@@ -237,10 +245,12 @@ export default function CulturaSection() {
           </motion.div>
 
           {/* RIGHT COLUMN — 2x2 grid */}
-          <div style={{ flex: "0 0 55%" }} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div style={{ flex: "0 0 55%", alignSelf: "stretch", display: "flex", alignItems: "center" }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
             {CARDS.map((card, i) => (
               <DifferentialCard key={card.title} icon={card.icon} title={card.title} text={card.text} delay={i * 100} />
             ))}
+          </div>
           </div>
         </div>
       </div>
