@@ -5,6 +5,18 @@ import { useInHireJobs } from "@/hooks/useInHireJobs";
 
 const AREAS = ["Todas", "Tecnologia", "Design", "Marketing", "Comercial", "Operações", "RH"];
 
+const toSlug = (name) => {
+  if (!name) return '';
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-');
+};
+
 const SENIORITY_MAP = {
   junior: "Júnior",
   "mid-level": "Pleno",
@@ -135,7 +147,7 @@ function JobCard({ job, index }) {
           {timeAgo(job.createdAt || job.created_at)}
         </span>
         <a
-          href={`https://loglabdigital.inhire.app/vagas/${job.id}`}
+          href={`https://loglabdigital.inhire.app/vagas/${job.id}/${toSlug(job.title || job.name)}`}
           target="_blank"
           rel="noopener noreferrer"
           style={{
