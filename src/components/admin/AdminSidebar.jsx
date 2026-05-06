@@ -1,11 +1,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Users, Briefcase, Settings, LogOut } from "lucide-react";
+import { Users, Briefcase, Settings, LogOut, MessageSquare, FileText } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const NAV = [
   { label: "Talentos", icon: Users, path: "/admin/talentos" },
   { label: "Vagas", icon: Briefcase, path: "/admin/vagas" },
+  { label: "Mensagens", icon: MessageSquare, path: "/admin/mensagens" },
+  { label: "Templates", icon: FileText, path: "/admin/templates" },
 ];
 
 export default function AdminSidebar({ user }) {

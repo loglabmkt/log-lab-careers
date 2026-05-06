@@ -1,0 +1,43 @@
+{
+  "name": "Template",
+  "type": "object",
+  "properties": {
+    "nome": {
+      "type": "string",
+      "description": "Nome do template"
+    },
+    "categoria": {
+      "type": "string",
+      "enum": [
+        "Vaga aberta",
+        "Boas-vindas",
+        "Entrevista",
+        "Follow-up",
+        "Aprova\u00e7\u00e3o",
+        "Personalizado"
+      ],
+      "description": "Categoria do template"
+    },
+    "conteudo": {
+      "type": "string",
+      "description": "Texto com vari\u00e1veis entre colchetes"
+    },
+    "variaveis": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Lista das vari\u00e1veis usadas no template"
+    },
+    "ativo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Se o template est\u00e1 ativo"
+    }
+  },
+  "required": [
+    "nome",
+    "categoria",
+    "conteudo"
+  ]
+}

@@ -9,6 +9,8 @@ import Home from './pages/Home';
 import AdminLayout from './components/admin/AdminLayout';
 import TalentosPage from './pages/admin/TalentosPage';
 import VagasPage from './pages/admin/VagasPage';
+import MensagensPage from './pages/admin/MensagensPage';
+import TemplatesPage from './pages/admin/TemplatesPage';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -42,6 +44,8 @@ const AuthenticatedApp = () => {
         <Route index element={<TalentosPage />} />
         <Route path="talentos" element={<TalentosPage />} />
         <Route path="vagas" element={<VagasPage />} />
+        <Route path="mensagens" element={<MensagensPage />} />
+        <Route path="templates" element={<TemplatesPage />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

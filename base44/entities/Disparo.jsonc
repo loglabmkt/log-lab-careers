@@ -1,0 +1,71 @@
+{
+  "name": "Disparo",
+  "type": "object",
+  "properties": {
+    "templateId": {
+      "type": "string",
+      "description": "ID do template usado"
+    },
+    "templateNome": {
+      "type": "string",
+      "description": "Snapshot do nome do template"
+    },
+    "mensagemFinal": {
+      "type": "string",
+      "description": "Mensagem ap\u00f3s substitui\u00e7\u00e3o das vari\u00e1veis"
+    },
+    "destinatarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "whatsapp": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Lista de destinat\u00e1rios"
+    },
+    "totalEnviados": {
+      "type": "number",
+      "default": 0
+    },
+    "totalErros": {
+      "type": "number",
+      "default": 0
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "rascunho",
+        "agendado",
+        "enviando",
+        "concluido",
+        "erro"
+      ],
+      "default": "rascunho"
+    },
+    "criadoPor": {
+      "type": "string",
+      "description": "Email do usu\u00e1rio admin"
+    },
+    "enviadoEm": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data/hora do envio"
+    }
+  },
+  "required": [
+    "mensagemFinal",
+    "destinatarios"
+  ]
+}
