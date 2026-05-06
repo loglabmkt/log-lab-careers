@@ -30,7 +30,12 @@ async function getToken() {
   }
 
   const data = await res.json();
-  cachedToken = data.accessToken;
+  const token = data.accessToken;
+
+  console.log('[InHire] Token obtido:', token?.substring(0, 20) + '...');
+  console.log('[InHire] Token começa com eyJ?', token?.startsWith('eyJ'));
+
+  cachedToken = token;
   tokenTimestamp = now;
   return cachedToken;
 }
@@ -38,8 +43,10 @@ async function getToken() {
 async function fetchJobs(exclusiveStartKey = null, limit = 9) {
   const token = await getToken();
 
-  const body = { limit };
-  if (exclusiveStartKey) body.exclusiveStartKey = exclusiveStartKey;
+  const body = {
+    limit,
+    ...(exclusiveStartKey ? { exclusiveStartKey } : {}),
+  };
 
   const res = await fetch(JOBS_URL, {
     method: 'POST',
@@ -47,6 +54,7 @@ async function fetchJobs(exclusiveStartKey = null, limit = 9) {
       'Authorization': `Bearer ${token}`,
       'X-Tenant': INHIRE_TENANT,
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     body: JSON.stringify(body),
   });
