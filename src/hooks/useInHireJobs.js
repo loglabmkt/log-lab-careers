@@ -64,10 +64,13 @@ export function useInHireJobs() {
       const token = await getTokenViaXHR();
       const data = await fetchJobsViaServerFunction(token, startKeyParam);
 
+      const sortByDate = (arr) =>
+        [...arr].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
       if (startKeyParam) {
-        setAllJobs((prev) => [...prev, ...(data.results || [])]);
+        setAllJobs((prev) => sortByDate([...prev, ...(data.results || [])]));
       } else {
-        setAllJobs(data.results || []);
+        setAllJobs(sortByDate(data.results || []));
       }
       setStartKey(data.startKey || null);
     } catch (err) {

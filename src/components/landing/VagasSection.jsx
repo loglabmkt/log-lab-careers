@@ -117,25 +117,38 @@ function JobCard({ job, index }) {
         )}
       </div>
 
+      {job.description ? (
+        <p style={{
+          fontSize: "13px", color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-inter)",
+          lineHeight: "1.5", marginBottom: "12px",
+          overflow: "hidden", display: "-webkit-box",
+          WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+        }}>
+          {job.description}
+        </p>
+      ) : null}
+
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "20px" }} />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
         <span className="font-inter" style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>
           {timeAgo(job.createdAt || job.created_at)}
         </span>
-        <button
+        <a
+          href={`https://loglabdigital.inhire.app/vagas/${job.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
           style={{
             background: hovered ? "#F5B800" : "transparent",
             border: "1px solid rgba(245,184,0,0.4)",
             color: hovered ? "#0A0A0A" : "#F5B800",
             fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "13px",
             borderRadius: "8px", padding: "8px 16px", cursor: "pointer",
-            transition: "all 200ms ease",
+            transition: "all 200ms ease", textDecoration: "none", display: "inline-block",
           }}
-          onClick={() => job.url && window.open(job.url, "_blank")}
         >
           Ver vaga →
-        </button>
+        </a>
       </div>
     </motion.div>
   );
