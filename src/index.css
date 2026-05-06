@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -31,7 +31,7 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --font-titillium: 'Titillium Web', sans-serif;
+    --font-inter: 'Inter', sans-serif;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -85,11 +85,35 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-titillium);
+    font-family: var(--font-inter);
   }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @keyframes pulse-cta {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.03); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(20px, -20px) scale(1.05); }
+  66%       { transform: translate(-10px, 15px) scale(0.97); }
+}
+
+.cursor-blink {
+  color: #F5B800;
+  animation: blink 500ms step-end infinite;
+}
+
+.blob-float {
+  animation: blobFloat 8s ease-in-out infinite;
 }

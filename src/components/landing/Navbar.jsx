@@ -1,25 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
-  "Conheça a Log",
-  "Cultura",
-  "Log Blog",
-  "Institucional",
-  "Faça Parte",
-  "Eventos",
+  { label: "Conheça a Log", id: "inicio" },
+  { label: "Cultura", id: "cultura" },
+  { label: "Log Blog", id: null },
+  { label: "Institucional", id: null },
+  { label: "Faça Parte", id: "vagas" },
+  { label: "Eventos", id: null },
 ];
 
-function NavLink({ label }) {
+const SECTION_IDS = NAV_LINKS.filter((l) => l.id).map((l) => l.id);
+
+function NavLink({ label, id, active, onClick }) {
   const [hovered, setHovered] = useState(false);
+  const isHighlighted = active || hovered;
 
   return (
     <a
-      href="#"
-      className="relative font-titillium font-semibold text-sm flex items-center justify-center"
+      href={id ? `#${id}` : "#"}
+      onClick={(e) => { if (id) { e.preventDefault(); onClick(id); } }}
+      className="relative font-inter font-semibold text-sm flex items-center justify-center"
       style={{
-        color: hovered ? "#F5B800" : "#0A0A0A",
+        color: isHighlighted ? "#F5B800" : "#0A0A0A",
         padding: "6px 14px",
         transition: "color 220ms ease-out",
         textDecoration: "none",
@@ -27,15 +31,10 @@ function NavLink({ label }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Pill border overlay — animates on hover */}
       <motion.span
         aria-hidden
         initial={false}
-        animate={
-          hovered
-            ? { scale: 1, opacity: 1 }
-            : { scale: 0.7, opacity: 0 }
-        }
+        animate={isHighlighted ? { scale: 1, opacity: 1 } : { scale: 0.7, opacity: 0 }}
         transition={{ duration: 0.22, ease: "easeOut" }}
         style={{
           position: "absolute",
@@ -52,17 +51,48 @@ function NavLink({ label }) {
 
 export default function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("inicio");
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // IntersectionObserver for active section
+  useEffect(() => {
+    const observers = [];
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
+        { threshold: 0.4 }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setDrawerOpen(false);
+  };
 
   return (
     <>
       <nav
         className="fixed top-0 left-0 w-full z-50 h-16 flex items-center"
         style={{
-          backgroundColor: "#FFFFFF",
-          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
+          backgroundColor: scrolled ? "rgba(255,255,255,0.80)" : "#FFFFFF",
+          backdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+          WebkitBackdropFilter: scrolled ? "blur(20px) saturate(180%)" : "none",
+          boxShadow: scrolled ? "0 1px 0 rgba(0,0,0,0.08)" : "0 2px 16px rgba(0,0,0,0.08)",
+          transition: "all 300ms ease",
         }}
       >
-        {/* Boxed container — same max-width as HeroSection */}
         <div
           className="w-full flex items-center justify-between"
           style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px" }}
@@ -71,18 +101,25 @@ export default function Navbar() {
           <img
             src="https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/20903d9b8_fb3797ffe_logotipo_loglab1.png"
             alt="Log Lab"
-            style={{ height: "40px", width: "auto" }}
+            style={{ height: "40px", width: "auto", cursor: "pointer" }}
+            onClick={() => scrollTo("inicio")}
           />
 
           {/* Desktop: links + CTA */}
           <div className="hidden md:flex items-center">
             {NAV_LINKS.map((link) => (
-              <NavLink key={link} label={link} />
+              <NavLink
+                key={link.label}
+                label={link.label}
+                id={link.id}
+                active={link.id === activeSection}
+                onClick={scrollTo}
+              />
             ))}
-
             <a
               href="#vagas"
-              className="font-titillium font-semibold text-sm transition-all duration-[250ms]"
+              onClick={(e) => { e.preventDefault(); scrollTo("vagas"); }}
+              className="font-inter font-semibold text-sm"
               style={{
                 backgroundColor: "#F5B800",
                 color: "#0A0A0A",
@@ -90,27 +127,18 @@ export default function Navbar() {
                 padding: "10px 22px",
                 marginLeft: "24px",
                 textDecoration: "none",
-                border: "none",
                 display: "inline-block",
+                transition: "background-color 250ms, color 250ms",
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#0A0A0A";
-                e.currentTarget.style.color = "#F5B800";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#F5B800";
-                e.currentTarget.style.color = "#0A0A0A";
-              }}
+              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#0A0A0A"; e.currentTarget.style.color = "#F5B800"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#F5B800"; e.currentTarget.style.color = "#0A0A0A"; }}
             >
               Ver todas as vagas
             </a>
           </div>
 
           {/* Mobile hamburger */}
-          <button
-            className="md:hidden text-[#0A0A0A]"
-            onClick={() => setDrawerOpen(true)}
-          >
+          <button className="md:hidden text-[#0A0A0A]" onClick={() => setDrawerOpen(true)}>
             <Menu size={28} />
           </button>
         </div>
@@ -121,49 +149,34 @@ export default function Navbar() {
         {drawerOpen && (
           <>
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.5 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 0.5 }} exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black z-50"
               onClick={() => setDrawerOpen(false)}
             />
             <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
               className="fixed top-0 right-0 h-full w-72 z-50 p-8 flex flex-col bg-white"
             >
-              <button
-                className="self-end mb-8 text-[#0A0A0A]"
-                onClick={() => setDrawerOpen(false)}
-              >
+              <button className="self-end mb-8 text-[#0A0A0A]" onClick={() => setDrawerOpen(false)}>
                 <X size={28} />
               </button>
               <div className="flex flex-col gap-6">
                 {NAV_LINKS.map((link) => (
                   <a
-                    key={link}
-                    href="#"
-                    className="font-titillium font-semibold text-lg text-[#0A0A0A]"
-                    onClick={() => setDrawerOpen(false)}
+                    key={link.label}
+                    href={link.id ? `#${link.id}` : "#"}
+                    className="font-inter font-semibold text-lg text-[#0A0A0A]"
+                    onClick={(e) => { if (link.id) { e.preventDefault(); scrollTo(link.id); } else setDrawerOpen(false); }}
                   >
-                    {link}
+                    {link.label}
                   </a>
                 ))}
                 <a
                   href="#vagas"
-                  className="font-titillium font-semibold text-base text-center rounded-lg transition-all duration-[250ms]"
-                  style={{
-                    backgroundColor: "#F5B800",
-                    color: "#0A0A0A",
-                    padding: "12px 22px",
-                    marginTop: "16px",
-                    textDecoration: "none",
-                    width: "100%",
-                    display: "block",
-                  }}
-                  onClick={() => setDrawerOpen(false)}
+                  onClick={(e) => { e.preventDefault(); scrollTo("vagas"); }}
+                  className="font-inter font-semibold text-base text-center rounded-lg"
+                  style={{ backgroundColor: "#F5B800", color: "#0A0A0A", padding: "12px 22px", marginTop: "16px", textDecoration: "none", display: "block" }}
                 >
                   Ver todas as vagas
                 </a>
