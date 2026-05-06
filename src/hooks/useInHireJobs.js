@@ -7,67 +7,79 @@ const AUTH_URL = 'https://auth.inhire.app/login';
 const JOBS_URL = 'https://api.inhire.app/jobs/paginated';
 
 // Module-level token cache
-let cachedToken = null;
-let tokenTimestamp = 0;
-const TOKEN_TTL = 50 * 60 * 1000; // 50 minutes
+let tokenCache = { token: null, timestamp: 0 };
+
+function xhrRequest({ method, url, headers, body }) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+
+    Object.entries(headers || {}).forEach(([key, value]) => {
+      xhr.setRequestHeader(key, value);
+    });
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        try { resolve(JSON.parse(xhr.responseText)); }
+        catch { resolve(xhr.responseText); }
+      } else {
+        reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText}`));
+      }
+    };
+
+    xhr.onerror = () => reject(new Error('Network error'));
+    xhr.ontimeout = () => reject(new Error('Request timeout'));
+    xhr.timeout = 15000;
+
+    xhr.send(body ? JSON.stringify(body) : null);
+  });
+}
 
 async function getToken() {
-  const now = Date.now();
-  if (cachedToken && now - tokenTimestamp < TOKEN_TTL) return cachedToken;
+  if (tokenCache.token && Date.now() - tokenCache.timestamp < 50 * 60 * 1000) {
+    return tokenCache.token;
+  }
 
-  const res = await fetch(AUTH_URL, {
+  const data = await xhrRequest({
     method: 'POST',
+    url: AUTH_URL,
     headers: {
       'Content-Type': 'application/json',
       'X-Tenant': INHIRE_TENANT,
     },
-    body: JSON.stringify({ email: INHIRE_EMAIL, password: INHIRE_PASSWORD }),
+    body: { email: INHIRE_EMAIL, password: INHIRE_PASSWORD },
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Auth failed: ${res.status} ${err}`);
-  }
+  console.log('[InHire] Login OK. Token:', data.accessToken?.substring(0, 20) + '...');
+  console.log('[InHire] Token válido?', data.accessToken?.startsWith('eyJ'));
 
-  const data = await res.json();
-  const token = data.accessToken;
-
-  console.log('[InHire] Token obtido:', token?.substring(0, 20) + '...');
-  console.log('[InHire] Token começa com eyJ?', token?.startsWith('eyJ'));
-
-  cachedToken = token;
-  tokenTimestamp = now;
-  return cachedToken;
+  tokenCache = { token: data.accessToken, timestamp: Date.now() };
+  return data.accessToken;
 }
 
 async function fetchJobs(exclusiveStartKey = null, limit = 9) {
   const token = await getToken();
 
-  const body = {
-    limit,
-    ...(exclusiveStartKey ? { exclusiveStartKey } : {}),
-  };
+  console.log('[InHire] Buscando vagas com token:', token?.substring(0, 20) + '...');
 
-  const res = await fetch(JOBS_URL, {
+  const body = { limit };
+  if (exclusiveStartKey) body.exclusiveStartKey = exclusiveStartKey;
+
+  const data = await xhrRequest({
     method: 'POST',
+    url: JOBS_URL,
     headers: {
       'Authorization': `Bearer ${token}`,
       'X-Tenant': INHIRE_TENANT,
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
     },
-    body: JSON.stringify(body),
+    body,
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Jobs fetch failed: ${res.status} ${err}`);
-  }
+  const openJobs = (data.results || []).filter((j) => j.status === 'open');
+  console.log('[InHire] Vagas abertas recebidas:', openJobs.length);
 
-  const data = await res.json();
-  const all = data.results || data.items || (Array.isArray(data) ? data : []);
-  const results = all.filter((j) => j.status === 'open');
-  return { results, startKey: data.startKey || null };
+  return { results: openJobs, startKey: data.startKey || null };
 }
 
 export function useInHireJobs() {
