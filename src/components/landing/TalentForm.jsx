@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, User, Phone, ChevronDown, Loader2, CheckCircle } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 const AREAS = ["Tecnologia", "Design", "Marketing", "Comercial", "Operações", "RH", "Outros"];
 
@@ -47,6 +48,7 @@ export default function TalentForm() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const validate = () => {
     const e = {};
@@ -61,10 +63,20 @@ export default function TalentForm() {
     const v = validate();
     if (Object.keys(v).length > 0) { setErrors(v); return; }
     setErrors({});
+    setSubmitError("");
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
+    const res = await base44.functions.invoke("saveTalento", {
+      nome: form.name,
+      whatsapp: form.phone,
+      areaInteresse: form.area,
+      aceitaWhatsapp: form.consent,
+    });
     setLoading(false);
-    setSuccess(true);
+    if (res.data?.success) {
+      setSuccess(true);
+    } else {
+      setSubmitError(res.data?.error || "Erro ao enviar. Tente novamente.");
+    }
   };
 
   if (success) {
@@ -173,8 +185,13 @@ export default function TalentForm() {
           className="w-full py-4 rounded-lg font-inter font-bold text-base text-white transition-all duration-300 hover:scale-[1.02] disabled:opacity-70 flex items-center justify-center gap-2"
           style={{ backgroundColor: "#0A0A0A" }}
         >
-          {loading ? <Loader2 size={20} className="animate-spin" /> : "Finalizar Cadastro"}
+          {loading ? <><Loader2 size={20} className="animate-spin" /> Enviando...</> : "Finalizar Cadastro"}
         </button>
+        {submitError && (
+          <p className="font-inter text-center" style={{ fontSize: "13px", color: "#ff4444", marginTop: "4px" }}>
+            {submitError}
+          </p>
+        )}
       </form>
     </motion.div>
   );

@@ -1,0 +1,54 @@
+{
+  "name": "Talento",
+  "type": "object",
+  "properties": {
+    "nome": {
+      "type": "string",
+      "description": "Nome completo do candidato"
+    },
+    "whatsapp": {
+      "type": "string",
+      "description": "N\u00famero de WhatsApp (somente d\u00edgitos)"
+    },
+    "areaInteresse": {
+      "type": "string",
+      "description": "\u00c1rea de interesse do candidato"
+    },
+    "aceitaWhatsapp": {
+      "type": "boolean",
+      "default": false,
+      "description": "Aceita receber mensagens via WhatsApp"
+    },
+    "dataCandidatura": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Data e hora do cadastro"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "novo",
+        "em_contato",
+        "entrevista_agendada",
+        "aprovado",
+        "descartado"
+      ],
+      "default": "novo",
+      "description": "Status do candidato no processo"
+    },
+    "observacoes": {
+      "type": "string",
+      "description": "Observa\u00e7\u00f5es internas sobre o candidato"
+    },
+    "origem": {
+      "type": "string",
+      "default": "site_carreiras",
+      "description": "Origem do cadastro"
+    }
+  },
+  "required": [
+    "nome",
+    "whatsapp",
+    "areaInteresse"
+  ]
+}
