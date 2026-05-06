@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
   const user = await base44.auth.me();
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { templateId, templateNome, mensagemFinal, destinatarios } = await req.json().catch(() => ({}));
+  const { templateId, templateNome, mensagemFinal, destinatarios, status } = await req.json().catch(() => ({}));
   if (!mensagemFinal || !destinatarios?.length) {
     return Response.json({ error: 'mensagemFinal e destinatarios são obrigatórios' }, { status: 400 });
   }
@@ -17,9 +17,9 @@ Deno.serve(async (req) => {
     destinatarios,
     totalEnviados: 0,
     totalErros: 0,
-    status: 'rascunho',
+    status: status || 'rascunho',
     criadoPor: user.email,
   });
 
-  return Response.json({ success: true, item: record });
+  return Response.json({ success: true, id: record.id, item: record });
 });

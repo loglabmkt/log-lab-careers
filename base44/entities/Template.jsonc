@@ -29,6 +29,10 @@
       },
       "description": "Lista das vari\u00e1veis usadas no template"
     },
+    "templateSid": {
+      "type": "string",
+      "description": "Template SID da API WhatsApp (opcional)"
+    },
     "ativo": {
       "type": "boolean",
       "default": true,

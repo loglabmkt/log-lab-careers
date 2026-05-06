@@ -28,6 +28,7 @@ export default function TemplateModal({ template, onClose, onSave }) {
     nome: template?.nome || "",
     categoria: template?.categoria || "Vaga aberta",
     conteudo: template?.conteudo || "",
+    templateSid: template?.templateSid || "",
     ativo: template?.ativo !== false,
   });
   const [saving, setSaving] = useState(false);
@@ -50,7 +51,7 @@ export default function TemplateModal({ template, onClose, onSave }) {
   const handleSubmit = async () => {
     if (!form.nome || !form.conteudo) return;
     setSaving(true);
-    await onSave({ id: template?.id, ...form });
+    await onSave({ id: template?.id, ...form, templateSid: form.templateSid || null });
     setSaving(false);
   };
 
@@ -99,6 +100,13 @@ export default function TemplateModal({ template, onClose, onSave }) {
               rows={8}
               style={{ ...s.input, fontFamily: "monospace", fontSize: "13px", resize: "vertical" }}
             />
+          </div>
+
+          {/* Template SID */}
+          <div>
+            <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Template SID (WhatsApp API)</label>
+            <input value={form.templateSid} onChange={e => setForm(f => ({ ...f, templateSid: e.target.value }))} placeholder="HXce43d376230cc7aada1ceef67d307ace" style={s.input} />
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", margin: "4px 0 0" }}>Opcional. Deixe vazio para usar o template padrão.</p>
           </div>
 
           {/* Variáveis */}

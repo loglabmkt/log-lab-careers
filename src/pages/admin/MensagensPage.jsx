@@ -32,18 +32,22 @@ export default function MensagensPage() {
     }
   }, [location.state]);
 
-  const handleFinish = async () => {
-    await base44.functions.invoke("createDisparo", {
+  const handleFinish = async ({ status = "rascunho" } = {}) => {
+    const res = await base44.functions.invoke("createDisparo", {
       templateId: template?.id || null,
       templateNome: template?.nome || "Mensagem personalizada",
       mensagemFinal: mensagem,
       destinatarios,
+      status,
     });
-    setRefresh(r => r + 1);
-    setStep(1);
-    setDestinatarios([]);
-    setTemplate(null);
-    setMensagem("");
+    if (status === "rascunho") {
+      setRefresh(r => r + 1);
+      setStep(1);
+      setDestinatarios([]);
+      setTemplate(null);
+      setMensagem("");
+    }
+    return res.data;
   };
 
   return (

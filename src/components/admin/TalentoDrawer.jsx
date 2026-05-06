@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { X, Check, X as XIcon } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Check, CheckCircle2, XCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -7,6 +7,38 @@ import { ptBR } from "date-fns/locale";
 export default function TalentoDrawer({ talento, onClose, onUpdate }) {
   const [obs, setObs] = useState(talento?.observacoes || "");
   const [saving, setSaving] = useState(false);
+  const [templates, setTemplates] = useState([]);
+  const [selectedTplId, setSelectedTplId] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState(null); // null | 'ok' | 'error' | string
+
+  useEffect(() => {
+    base44.functions.invoke("getTemplates", {}).then(res => {
+      const ativos = (res.data?.items || []).filter(t => t.ativo);
+      setTemplates(ativos);
+      if (ativos.length > 0) setSelectedTplId(ativos[0].id);
+    });
+  }, []);
+
+  const handleSendWhatsApp = async () => {
+    const tpl = templates.find(t => t.id === selectedTplId);
+    if (!tpl) return;
+    setSending(true);
+    setSendResult(null);
+    const mensagem = (tpl.conteudo || "")
+      .replace(/\[Nome\]/g, talento.nome || "")
+      .replace(/\[Area\]/g, talento.areaInteresse || "")
+      .replace(/\[LinkSite\]/g, "https://log-lab-careers.base44.app")
+      .replace(/\[[^\]]+\]/g, m => m);
+
+    const res = await base44.functions.invoke("sendWhatsAppMessage", {
+      to: talento.whatsapp,
+      mensagem,
+      templateSid: tpl.templateSid || null,
+    });
+    setSending(false);
+    setSendResult(res.data?.success ? "ok" : (res.data?.error || "Erro desconhecido"));
+  };
 
   const handleSaveObs = async () => {
     setSaving(true);
@@ -66,6 +98,36 @@ export default function TalentoDrawer({ talento, onClose, onUpdate }) {
               <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>{value || "-"}</div>
             </div>
           ))}
+
+          {/* Enviar WhatsApp */}
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "20px" }}>
+            <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "10px" }}>Enviar Mensagem WhatsApp</div>
+            <select
+              value={selectedTplId}
+              onChange={e => { setSelectedTplId(e.target.value); setSendResult(null); }}
+              style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", padding: "9px 12px", color: "#FFFFFF", fontFamily: "var(--font-inter)", fontSize: "14px", outline: "none", marginBottom: "10px", cursor: "pointer" }}
+            >
+              {templates.length === 0 && <option value="">Nenhum template disponível</option>}
+              {templates.map(t => <option key={t.id} value={t.id} style={{ background: "#1a1a1a" }}>{t.nome}</option>)}
+            </select>
+            <button
+              onClick={handleSendWhatsApp}
+              disabled={sending || !selectedTplId}
+              style={{ width: "100%", padding: "10px", background: sending ? "rgba(37,211,102,0.15)" : "#25D366", border: "none", borderRadius: "8px", color: "#fff", fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "13px", cursor: sending || !selectedTplId ? "default" : "pointer", opacity: !selectedTplId ? 0.5 : 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "7px" }}
+            >
+              {sending ? "Enviando..." : "Enviar Mensagem"}
+            </button>
+            {sendResult === "ok" && (
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px", color: "#4ade80", fontFamily: "var(--font-inter)", fontSize: "13px" }}>
+                <CheckCircle2 size={16} /> Mensagem enviada com sucesso!
+              </div>
+            )}
+            {sendResult && sendResult !== "ok" && (
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "8px", color: "#f87171", fontFamily: "var(--font-inter)", fontSize: "13px" }}>
+                <XCircle size={16} /> {sendResult}
+              </div>
+            )}
+          </div>
 
           {/* Observações */}
           <div>

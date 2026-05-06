@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ChevronLeft, AlertTriangle, ExternalLink, X } from "lucide-react";
+import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 function fmtWA(n = "") {
   const d = n.replace(/\D/g, "");
@@ -8,28 +9,133 @@ function fmtWA(n = "") {
   return n;
 }
 
-function waLink(whatsapp, mensagem) {
-  const num = whatsapp.replace(/\D/g, "");
-  const intl = num.startsWith("55") ? num : `55${num}`;
-  return `https://wa.me/${intl}?text=${encodeURIComponent(mensagem)}`;
-}
-
 export default function MensagensStep3({ destinatarios, template, mensagem, onBack, onFinish }) {
+  const [state, setState] = useState("idle"); // idle | sending | done | error
+  const [progress, setProgress] = useState(0);
+  const [resultado, setResultado] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [linksModal, setLinksModal] = useState(false);
 
   const personalizar = (dest) => mensagem
     .replace(/\[Nome\]/g, dest.nome || "")
     .replace(/\[Area\]/g, dest.area || "")
     .replace(/\[[^\]]+\]/g, m => m);
 
-  const handleEnviar = async () => {
+  const handleSalvarRascunho = async () => {
     setSaving(true);
-    await onFinish();
+    await onFinish({ status: "rascunho" });
     setSaving(false);
-    setLinksModal(true);
   };
 
+  const handleEnviar = async () => {
+    setState("sending");
+    setProgress(0);
+
+    // Salvar disparo antes de enviar
+    const disparoRes = await onFinish({ status: "enviando" });
+    const disparoId = disparoRes?.id || null;
+
+    // Simular progresso animado enquanto envia
+    const progressInterval = setInterval(() => {
+      setProgress(p => Math.min(p + 2, 90));
+    }, 200);
+
+    const res = await base44.functions.invoke("sendDisparoWhatsApp", {
+      disparoId,
+      destinatarios,
+      mensagemTemplate: mensagem,
+      templateSid: template?.templateSid || null,
+    });
+
+    clearInterval(progressInterval);
+    setProgress(100);
+
+    const data = res.data;
+    setResultado(data);
+
+    if (!data || data.error) {
+      setState("error");
+    } else {
+      setState("done");
+    }
+  };
+
+  // ── Estado: enviando ──
+  if (state === "sending") {
+    return (
+      <div style={{ textAlign: "center", padding: "48px 0" }}>
+        <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "18px", color: "#FFFFFF", marginBottom: "24px" }}>
+          Enviando mensagens...
+        </div>
+        <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: "100px", height: "8px", width: "100%", maxWidth: "420px", margin: "0 auto 12px", overflow: "hidden" }}>
+          <div style={{ height: "100%", background: "#F5B800", borderRadius: "100px", width: `${progress}%`, transition: "width 200ms ease" }} />
+        </div>
+        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>
+          {Math.round(progress)}% — aguarde...
+        </div>
+      </div>
+    );
+  }
+
+  // ── Estado: concluído ──
+  if (state === "done" && resultado) {
+    const { totalEnviados, totalErros, resultados } = resultado;
+    const falhos = (resultados || []).filter(r => !r.success);
+
+    return (
+      <div style={{ textAlign: "center", padding: "40px 0" }}>
+        {totalErros === 0 ? (
+          <>
+            <CheckCircle2 size={56} color="#4ade80" style={{ margin: "0 auto 16px" }} />
+            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+              {totalEnviados} mensage{totalEnviados !== 1 ? "ns enviadas" : "m enviada"} com sucesso!
+            </div>
+          </>
+        ) : totalEnviados === 0 ? (
+          <>
+            <XCircle size={56} color="#f87171" style={{ margin: "0 auto 16px" }} />
+            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+              Falha no envio. Verifique a conexão com a API.
+            </div>
+            <button onClick={handleEnviar} style={{ marginTop: "16px", padding: "10px 24px", background: "#F5B800", border: "none", borderRadius: "8px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, cursor: "pointer" }}>
+              Tentar novamente
+            </button>
+          </>
+        ) : (
+          <>
+            <AlertTriangle size={56} color="#F5B800" style={{ margin: "0 auto 16px" }} />
+            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+              {totalEnviados} enviada{totalEnviados !== 1 ? "s" : ""} · {totalErros} com erro
+            </div>
+            <div style={{ maxWidth: "480px", margin: "16px auto 0", display: "flex", flexDirection: "column", gap: "6px", textAlign: "left" }}>
+              {falhos.map((f, i) => (
+                <div key={i} style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "8px", padding: "10px 14px" }}>
+                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>{f.nome}</div>
+                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "#f87171" }}>{f.error}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // ── Estado: erro geral ──
+  if (state === "error") {
+    return (
+      <div style={{ textAlign: "center", padding: "48px 0" }}>
+        <XCircle size={56} color="#f87171" style={{ margin: "0 auto 16px" }} />
+        <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+          Erro ao conectar com a API.
+        </div>
+        <button onClick={() => setState("idle")} style={{ marginTop: "16px", padding: "10px 24px", background: "#F5B800", border: "none", borderRadius: "8px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, cursor: "pointer" }}>
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
+
+  // ── Estado: idle (padrão) ──
   return (
     <div>
       {/* Resumo */}
@@ -62,8 +168,8 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
         </div>
       </div>
 
-      {/* Preview final */}
-      <div style={{ marginBottom: "20px" }}>
+      {/* Preview */}
+      <div style={{ marginBottom: "24px" }}>
         <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "10px" }}>Preview da mensagem:</div>
         <div style={{ background: "#075e54", borderRadius: "12px", padding: "16px" }}>
           <div style={{ background: "#dcf8c6", borderRadius: "8px", padding: "12px 14px", maxWidth: "85%", marginLeft: "auto", fontFamily: "var(--font-inter)", fontSize: "13px", color: "#111", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
@@ -72,57 +178,20 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
         </div>
       </div>
 
-      {/* Aviso */}
-      <div style={{ background: "rgba(245,184,0,0.08)", border: "1px solid rgba(245,184,0,0.25)", borderRadius: "10px", padding: "14px 16px", marginBottom: "24px", display: "flex", gap: "10px" }}>
-        <AlertTriangle size={18} color="#F5B800" style={{ flexShrink: 0, marginTop: "1px" }} />
-        <p style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.7)", margin: 0, lineHeight: "1.6" }}>
-          <strong style={{ color: "#F5B800" }}>Integração WhatsApp em breve.</strong> Por ora, o disparo será salvo como rascunho e você poderá usar os links wa.me para envio manual enquanto a API não está configurada.
-        </p>
-      </div>
-
       {/* Botões */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "10px 18px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#FFFFFF", fontFamily: "var(--font-inter)", cursor: "pointer" }}>
           <ChevronLeft size={16} /> Voltar
         </button>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button onClick={async () => { setSaving(true); await onFinish(); setSaving(false); }} disabled={saving} style={{ padding: "10px 18px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#FFFFFF", fontFamily: "var(--font-inter)", cursor: "pointer" }}>
-            Salvar Rascunho
+          <button onClick={handleSalvarRascunho} disabled={saving} style={{ padding: "10px 18px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#FFFFFF", fontFamily: "var(--font-inter)", cursor: "pointer", opacity: saving ? 0.7 : 1 }}>
+            {saving ? "Salvando..." : "Salvar Rascunho"}
           </button>
-          <button onClick={handleEnviar} disabled={saving} style={{ padding: "10px 20px", background: "#F5B800", border: "none", borderRadius: "8px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "14px", cursor: saving ? "default" : "pointer", opacity: saving ? 0.7 : 1 }}>
-            {saving ? "Salvando..." : "Enviar Agora"}
+          <button onClick={handleEnviar} style={{ padding: "10px 20px", background: "#F5B800", border: "none", borderRadius: "8px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "14px", cursor: "pointer" }}>
+            Enviar Agora
           </button>
         </div>
       </div>
-
-      {/* Modal links manuais */}
-      {linksModal && (
-        <>
-          <div onClick={() => setLinksModal(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 40 }} />
-          <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", width: "540px", maxWidth: "95vw", maxHeight: "80vh", overflowY: "auto", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "16px", zIndex: 50, padding: "24px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "17px", color: "#FFFFFF", margin: 0 }}>Links para envio manual</h3>
-              <button onClick={() => setLinksModal(false)} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.5)" }}><X size={18} /></button>
-            </div>
-            <p style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.5)", marginBottom: "16px", lineHeight: "1.5" }}>
-              Enquanto a API de WhatsApp não está configurada, use os links abaixo para envio manual:
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              {destinatarios.map((d, i) => (
-                <div key={d.id || i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "10px 12px", background: "rgba(255,255,255,0.03)", borderRadius: "8px" }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>{d.nome}</div>
-                    <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{fmtWA(d.whatsapp)}</div>
-                  </div>
-                  <a href={waLink(d.whatsapp, personalizar(d))} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: "5px", padding: "7px 12px", background: "#25D366", borderRadius: "6px", color: "#fff", fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "12px", textDecoration: "none" }}>
-                    Abrir <ExternalLink size={12} />
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }
