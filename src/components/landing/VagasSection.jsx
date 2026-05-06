@@ -197,18 +197,22 @@ export default function VagasSection() {
     if (append) setLoadingMore(true);
     else { setLoading(true); setError(null); }
 
-    const res = await base44.functions.invoke("getJobs", {
-      exclusiveStartKey: key,
-      limit: 12,
-    });
+    try {
+      const res = await base44.functions.invoke("getJobs", {
+        exclusiveStartKey: key,
+        limit: 12,
+      });
 
-    const data = res.data;
-    if (append) {
-      setJobs((prev) => [...prev, ...(data.results || [])]);
-    } else {
-      setJobs(data.results || []);
+      const data = res.data;
+      if (append) {
+        setJobs((prev) => [...prev, ...(data.results || [])]);
+      } else {
+        setJobs(data.results || []);
+      }
+      setStartKey(data.startKey || null);
+    } catch (err) {
+      setError(err.message || "Erro ao carregar vagas.");
     }
-    setStartKey(data.startKey || null);
     if (append) setLoadingMore(false);
     else setLoading(false);
   }, []);
