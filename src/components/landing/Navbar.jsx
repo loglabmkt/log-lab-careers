@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,51 +11,102 @@ const NAV_LINKS = [
   "Eventos",
 ];
 
-export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+function NavLink({ label }) {
+  const [hovered, setHovered] = useState(false);
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  return (
+    <a
+      href="#"
+      className="relative font-titillium font-semibold text-sm flex items-center justify-center"
+      style={{
+        color: hovered ? "#F5B800" : "#0A0A0A",
+        padding: "6px 14px",
+        transition: "color 220ms ease-out",
+        textDecoration: "none",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Pill border overlay — animates on hover */}
+      <motion.span
+        aria-hidden
+        initial={false}
+        animate={
+          hovered
+            ? { scale: 1, opacity: 1 }
+            : { scale: 0.7, opacity: 0 }
+        }
+        transition={{ duration: 0.22, ease: "easeOut" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          border: "2px solid #F5B800",
+          borderRadius: "50px",
+          pointerEvents: "none",
+        }}
+      />
+      {label}
+    </a>
+  );
+}
+
+export default function Navbar() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-50 h-16 flex items-center transition-shadow duration-300 ${
-          scrolled ? "shadow-lg" : ""
-        }`}
-        style={{ backgroundColor: "#F5B800" }}
+        className="fixed top-0 left-0 w-full z-50 h-16 flex items-center"
+        style={{
+          backgroundColor: "#FFFFFF",
+          boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
+        }}
       >
-        {/* Inner boxed container — matches HeroSection max-width */}
+        {/* Boxed container — same max-width as HeroSection */}
         <div
-          className="w-full flex items-center justify-between px-6 md:px-12"
-          style={{ maxWidth: "1280px", margin: "0 auto" }}
+          className="w-full flex items-center justify-between"
+          style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px" }}
         >
           {/* Logo */}
           <div className="flex flex-col leading-tight">
             <span className="font-titillium font-bold text-[26px] text-[#0A0A0A]">
-              log.lab<span style={{ color: scrolled ? "#F5B800" : "#0A0A0A" }}>.</span>
+              log.lab.
             </span>
-            <span className="font-titillium text-[10px] text-[#3a3a3a] -mt-1">
+            <span className="font-titillium text-[10px] -mt-1" style={{ color: "#666666" }}>
               Tecnologia que transforma
             </span>
           </div>
 
-          {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* Desktop: links + CTA */}
+          <div className="hidden md:flex items-center">
             {NAV_LINKS.map((link) => (
-              <a
-                key={link}
-                href="#"
-                className="font-titillium font-semibold text-sm text-[#0A0A0A] relative group"
-              >
-                {link}
-                <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-[#0A0A0A] transition-all duration-300 group-hover:w-full" />
-              </a>
+              <NavLink key={link} label={link} />
             ))}
+
+            <a
+              href="#vagas"
+              className="font-titillium font-semibold text-sm transition-all duration-[250ms]"
+              style={{
+                backgroundColor: "#F5B800",
+                color: "#0A0A0A",
+                borderRadius: "8px",
+                padding: "10px 22px",
+                marginLeft: "24px",
+                textDecoration: "none",
+                border: "none",
+                display: "inline-block",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#0A0A0A";
+                e.currentTarget.style.color = "#F5B800";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#F5B800";
+                e.currentTarget.style.color = "#0A0A0A";
+              }}
+            >
+              Ver todas as vagas
+            </a>
           </div>
 
           {/* Mobile hamburger */}
@@ -84,8 +135,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 h-full w-72 z-50 p-8 flex flex-col"
-              style={{ backgroundColor: "#F5B800" }}
+              className="fixed top-0 right-0 h-full w-72 z-50 p-8 flex flex-col bg-white"
             >
               <button
                 className="self-end mb-8 text-[#0A0A0A]"
@@ -104,6 +154,22 @@ export default function Navbar() {
                     {link}
                   </a>
                 ))}
+                <a
+                  href="#vagas"
+                  className="font-titillium font-semibold text-base text-center rounded-lg transition-all duration-[250ms]"
+                  style={{
+                    backgroundColor: "#F5B800",
+                    color: "#0A0A0A",
+                    padding: "12px 22px",
+                    marginTop: "16px",
+                    textDecoration: "none",
+                    width: "100%",
+                    display: "block",
+                  }}
+                  onClick={() => setDrawerOpen(false)}
+                >
+                  Ver todas as vagas
+                </a>
               </div>
             </motion.div>
           </>
