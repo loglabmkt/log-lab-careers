@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
+import { classifyJob } from "../utils/classifyJob";
 
 const INHIRE_EMAIL = 'service-account-ac84cef9-a989-44ab-a10b-ee137d1e0e3c@inhire.app';
 const INHIRE_PASSWORD = 'hgCPvSC9dwYE8XX5Te5p';
@@ -64,13 +65,26 @@ export function useInHireJobs() {
       const token = await getTokenViaXHR();
       const data = await fetchJobsViaServerFunction(token, startKeyParam);
 
+      const addCategory = (arr) =>
+        (arr || []).map((job) => ({
+          ...job,
+          category: classifyJob(job.title || job.name, job.area),
+        }));
+
       const sortByDate = (arr) =>
         [...arr].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+      const categorized = addCategory(data.results);
+
+      // Log para confirmar classificação
+      categorized.slice(0, 3).forEach((j) =>
+        console.log(`[classifyJob] "${j.title || j.name}" → ${j.category}`)
+      );
+
       if (startKeyParam) {
-        setAllJobs((prev) => sortByDate([...prev, ...(data.results || [])]));
+        setAllJobs((prev) => sortByDate([...prev, ...categorized]));
       } else {
-        setAllJobs(sortByDate(data.results || []));
+        setAllJobs(sortByDate(categorized));
       }
       setStartKey(data.startKey || null);
     } catch (err) {
@@ -99,9 +113,7 @@ export function useInHireJobs() {
 
   const jobs = activeFilter === 'Todas'
     ? allJobs
-    : allJobs.filter((j) =>
-        (j.area || j.department || '').toLowerCase().includes(activeFilter.toLowerCase())
-      );
+    : allJobs.filter((j) => j.category === activeFilter);
 
   return {
     jobs,

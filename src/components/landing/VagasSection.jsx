@@ -112,13 +112,13 @@ function JobCard({ job, index }) {
         }} />
       )}
 
-      {(job.area || job.department) && (
+      {job.category && (
         <div style={{
           display: "inline-block", background: "rgba(245,184,0,0.12)", color: "#F5B800",
           fontSize: "11px", fontWeight: 500, borderRadius: "12px", padding: "4px 10px",
           marginBottom: "16px", alignSelf: "flex-start", fontFamily: "var(--font-inter)",
         }}>
-          {job.area || job.department}
+          {job.category}
         </div>
       )}
 
