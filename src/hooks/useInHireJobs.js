@@ -57,29 +57,55 @@ async function getToken() {
   return data.accessToken;
 }
 
+function xhrAttempt({ method, url, headers, body }) {
+  return new Promise((resolve) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+    Object.entries(headers || {}).forEach(([k, v]) => xhr.setRequestHeader(k, v));
+    xhr.onload = () => {
+      let parsed;
+      try { parsed = JSON.parse(xhr.responseText); } catch { parsed = xhr.responseText; }
+      resolve({ status: xhr.status, ok: xhr.status >= 200 && xhr.status < 300, data: parsed });
+    };
+    xhr.onerror = () => resolve({ status: 0, ok: false, data: 'Network error' });
+    xhr.ontimeout = () => resolve({ status: 0, ok: false, data: 'Timeout' });
+    xhr.timeout = 15000;
+    xhr.send(body ? JSON.stringify(body) : null);
+  });
+}
+
 async function fetchJobs(exclusiveStartKey = null, limit = 9) {
   const token = await getToken();
-
   console.log('[InHire] Buscando vagas com token:', token?.substring(0, 20) + '...');
 
   const body = { limit };
   if (exclusiveStartKey) body.exclusiveStartKey = exclusiveStartKey;
 
-  const data = await xhrRequest({
-    method: 'POST',
-    url: JOBS_URL,
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'X-Tenant': INHIRE_TENANT,
-      'Content-Type': 'application/json',
-    },
-    body,
-  });
+  const baseHeaders = { 'X-Tenant': INHIRE_TENANT, 'Content-Type': 'application/json' };
 
-  const openJobs = (data.results || []).filter((j) => j.status === 'open');
-  console.log('[InHire] Vagas abertas recebidas:', openJobs.length);
+  const attempts = [
+    { label: 'authorization (lowercase)', headers: { ...baseHeaders, 'authorization': `Bearer ${token}` }, url: JOBS_URL },
+    { label: 'x-authorization', headers: { ...baseHeaders, 'x-authorization': `Bearer ${token}` }, url: JOBS_URL },
+    { label: 'token in query string', headers: baseHeaders, url: `${JOBS_URL}?token=${token}` },
+    { label: 'Basic auth', headers: { ...baseHeaders, 'Authorization': `Basic ${btoa(token + ':')}` }, url: JOBS_URL },
+  ];
 
-  return { results: openJobs, startKey: data.startKey || null };
+  for (let i = 0; i < attempts.length; i++) {
+    const a = attempts[i];
+    console.log(`[InHire] Tentativa ${i + 1}: ${a.label}`);
+    const res = await xhrAttempt({ method: 'POST', url: a.url, headers: a.headers, body });
+    console.log(`[InHire] Tentativa ${i + 1} resultado: status=${res.status}`, res.data);
+
+    if (res.ok) {
+      console.log(`[InHire] ✅ Tentativa ${i + 1} (${a.label}) funcionou!`);
+      const all = res.data?.results || res.data?.items || (Array.isArray(res.data) ? res.data : []);
+      const openJobs = all.filter((j) => j.status === 'open');
+      console.log('[InHire] Vagas abertas recebidas:', openJobs.length);
+      return { results: openJobs, startKey: res.data?.startKey || null };
+    }
+  }
+
+  throw new Error('Todas as 4 tentativas falharam. Verifique os logs do console.');
 }
 
 export function useInHireJobs() {
