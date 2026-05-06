@@ -82,8 +82,7 @@ function JobCard({ job, index }) {
   const modalidade = getModalidade(job);
   const locationLabel = `${modalidade}${job.city ? ` · ${job.city}` : ''}`;
 
-  const PIPELINE_DESC = "Vaga para construção de pipeline.";
-  const showDescription = job.description && job.description.trim() !== '' && job.description.trim() !== PIPELINE_DESC;
+
 
   return (
     <motion.div
@@ -142,16 +141,7 @@ function JobCard({ job, index }) {
         )}
       </div>
 
-      {showDescription ? (
-        <p style={{
-          fontSize: "13px", color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-inter)",
-          lineHeight: "1.5", marginBottom: "12px",
-          overflow: "hidden", display: "-webkit-box",
-          WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
-        }}>
-          {job.description}
-        </p>
-      ) : null}
+
 
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "20px" }} />
 

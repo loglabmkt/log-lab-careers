@@ -58,11 +58,6 @@ Deno.serve(async (req) => {
 
   const sorted = enrichedJobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  // Log do primeiro resultado para diagnóstico
-  if (sorted.length > 0) {
-    console.log('[getJobs] Primeiro resultado enriquecido:', JSON.stringify(sorted[0], null, 2));
-  }
-
   return Response.json({
     results: sorted,
     startKey: leanData.startKey || null,
