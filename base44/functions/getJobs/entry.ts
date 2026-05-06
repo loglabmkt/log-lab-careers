@@ -1,5 +1,31 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
+// Padrões de títulos internos/templates que não devem aparecer publicamente.
+// "Banco de Talentos - Log, Lab" é vaga legítima e não bate nesses padrões.
+const EXCLUDED_PATTERNS = [
+  'vaga padrao',
+  'vaga modelo',
+  'vaga de teste',
+  'funil completo',
+  'template de vaga',
+];
+
+// Vagas "Banco de Talentos - [cargo]" são internas. A única exceção é "Log, Lab".
+function isExcluded(title = '') {
+  const normalized = title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  // Filtro 1: padrões genéricos
+  if (EXCLUDED_PATTERNS.some(p => normalized.includes(p))) return true;
+
+  // Filtro 2: "Banco de Talentos - <cargo>" — exclui, exceto "log, lab" / "log lab"
+  if (normalized.includes('banco de talentos')) {
+    const isBancoPrincipal = normalized.includes('log, lab') || normalized.includes('log lab');
+    if (!isBancoPrincipal) return true;
+  }
+
+  return false;
+}
+
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   const body = await req.json().catch(() => ({}));
@@ -56,7 +82,10 @@ Deno.serve(async (req) => {
     })
   );
 
-  const sorted = enrichedJobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  // 3. Filtrar vagas internas/templates por padrão de nome
+  const publicJobs = enrichedJobs.filter(job => !isExcluded(job.title || job.name));
+
+  const sorted = publicJobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return Response.json({
     results: sorted,
