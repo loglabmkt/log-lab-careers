@@ -68,14 +68,11 @@ export default function Navbar() {
           style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 48px" }}
         >
           {/* Logo */}
-          <div className="flex flex-col leading-tight">
-            <span className="font-titillium font-bold text-[26px] text-[#0A0A0A]">
-              log.lab.
-            </span>
-            <span className="font-titillium text-[10px] -mt-1" style={{ color: "#666666" }}>
-              Tecnologia que transforma
-            </span>
-          </div>
+          <img
+            src="https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/20903d9b8_fb3797ffe_logotipo_loglab1.png"
+            alt="Log Lab"
+            style={{ height: "40px", width: "auto" }}
+          />
 
           {/* Desktop: links + CTA */}
           <div className="hidden md:flex items-center">
