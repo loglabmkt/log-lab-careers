@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { label: "Log Blog", id: null },
   { label: "Institucional", id: null },
   { label: "Faça Parte", id: "vagas" },
+
   { label: "Eventos", id: null },
 ];
 
