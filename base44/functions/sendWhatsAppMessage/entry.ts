@@ -1,10 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 
 function formatNumber(num) {
-  const digits = num.replace(/\D/g, '');
-  if (digits.startsWith('55')) return digits;
-  if (digits.startsWith('0')) return '55' + digits.slice(1);
-  return '55' + digits;
+  const digits = (num || '').replace(/\D/g, '');
+  return digits.startsWith('55') ? digits : '55' + digits;
 }
 
 Deno.serve(async (req) => {
@@ -12,12 +10,9 @@ Deno.serve(async (req) => {
   const user = await base44.auth.me();
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { to, mensagem, templateSid, contentVariables } = await req.json();
+  const { to, templateSid, contentVariables } = await req.json().catch(() => ({}));
 
-  const toFormatted = formatNumber(to || '');
-  if (toFormatted.length < 12) {
-    return Response.json({ success: false, error: `Número inválido: ${to}` });
-  }
+  const toFormatted = formatNumber(to);
 
   const payload = {
     whatsapp_account_id: Deno.env.get('WHATSAPP_ACCOUNT_ID'),
@@ -25,6 +20,11 @@ Deno.serve(async (req) => {
     to: toFormatted,
     content_variables: contentVariables || {},
   };
+
+  console.log('[WA] URL:', Deno.env.get('WHATSAPP_API_URL'));
+  console.log('[WA] Payload:', JSON.stringify(payload));
+  console.log('[WA] Headers x-system-id:', Deno.env.get('WHATSAPP_SYSTEM_ID'));
+  console.log('[WA] Token (primeiros 20):', Deno.env.get('WHATSAPP_TOKEN')?.substring(0, 20));
 
   const response = await fetch(Deno.env.get('WHATSAPP_API_URL'), {
     method: 'POST',
@@ -36,13 +36,21 @@ Deno.serve(async (req) => {
     body: JSON.stringify(payload),
   });
 
-  const data = await response.json();
+  const responseText = await response.text();
+  console.log('[WA] Status:', response.status);
+  console.log('[WA] Response:', responseText);
+
+  let data;
+  try { data = JSON.parse(responseText); } catch { data = { raw: responseText }; }
 
   if (!response.ok) {
-    console.error(`[WhatsApp] Erro ${response.status}:`, JSON.stringify(data));
-    return Response.json({ success: false, error: data.message || data.error || JSON.stringify(data), status: response.status, rawResponse: data });
+    return Response.json({
+      success: false,
+      status: response.status,
+      error: data,
+      payloadEnviado: payload,
+    });
   }
 
-  console.log('[WhatsApp] Enviado para:', toFormatted);
   return Response.json({ success: true, data, to: toFormatted });
 });
