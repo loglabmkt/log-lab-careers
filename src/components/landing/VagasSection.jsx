@@ -70,7 +70,20 @@ function JobCard({ job, index }) {
   }, []);
 
   const seniority = SENIORITY_MAP[job.seniority] || job.seniority || "";
-  const location = job.location || job.city || job.state || "Remoto";
+
+  const getModalidade = (job) => {
+    if (job.workModel) return job.workModel;
+    if (job.contractType?.includes('Remoto')) return 'Remoto';
+    if (job.locationRequired === false) return 'Remoto';
+    if (job.locationRequired === true) return 'Presencial';
+    return 'A combinar';
+  };
+
+  const modalidade = getModalidade(job);
+  const locationLabel = `${modalidade}${job.city ? ` · ${job.city}` : ''}`;
+
+  const PIPELINE_DESC = "Vaga para construção de pipeline.";
+  const showDescription = job.description && job.description.trim() !== '' && job.description.trim() !== PIPELINE_DESC;
 
   return (
     <motion.div
@@ -120,7 +133,7 @@ function JobCard({ job, index }) {
 
       <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "20px" }}>
         <span className="font-inter" style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "5px" }}>
-          <MapPin size={13} /> {location}
+          <MapPin size={13} /> {locationLabel}
         </span>
         {seniority && (
           <span className="font-inter" style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "5px" }}>
@@ -129,7 +142,7 @@ function JobCard({ job, index }) {
         )}
       </div>
 
-      {job.description ? (
+      {showDescription ? (
         <p style={{
           fontSize: "13px", color: "rgba(255,255,255,0.45)", fontFamily: "var(--font-inter)",
           lineHeight: "1.5", marginBottom: "12px",

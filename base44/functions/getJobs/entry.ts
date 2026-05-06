@@ -9,10 +9,8 @@ Deno.serve(async (req) => {
     return Response.json({ error: 'Token não fornecido' }, { status: 400 });
   }
 
-  const jobsBody = { limit };
-  if (exclusiveStartKey) jobsBody.exclusiveStartKey = exclusiveStartKey;
-
-  const response = await fetch('https://api.inhire.app/jobs/paginated/lean', {
+  // 1. Buscar lista lean
+  const leanResponse = await fetch('https://api.inhire.app/jobs/paginated/lean', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -20,20 +18,52 @@ Deno.serve(async (req) => {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-    body: JSON.stringify(jobsBody),
+    body: JSON.stringify({
+      limit,
+      ...(exclusiveStartKey ? { exclusiveStartKey } : {}),
+    }),
   });
 
-  if (!response.ok) {
-    const err = await response.text();
-    return Response.json({ error: `InHire API error: ${response.status} - ${err}` }, { status: response.status });
+  if (!leanResponse.ok) {
+    const err = await leanResponse.text();
+    return Response.json({ error: `InHire API error: ${leanResponse.status} - ${err}` }, { status: leanResponse.status });
   }
 
-  const data = await response.json();
-  const openJobs = (data.results || []).filter((j) => j.status === 'open');
+  const leanData = await leanResponse.json();
+  const openJobs = (leanData.results || []).filter((j) => j.status === 'open');
+
+  // 2. Buscar detalhes completos de cada vaga em paralelo
+  const enrichedJobs = await Promise.all(
+    openJobs.map(async (job) => {
+      try {
+        const detailResponse = await fetch(`https://api.inhire.app/jobs/${job.id}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Tenant': 'loglabdigital',
+            'Accept': 'application/json',
+          },
+        });
+
+        if (detailResponse.ok) {
+          const detail = await detailResponse.json();
+          return { ...job, ...detail };
+        }
+      } catch (e) {
+        console.warn(`[getJobs] Falha ao buscar detalhes da vaga ${job.id}:`, e);
+      }
+      return job;
+    })
+  );
+
+  // Log do primeiro resultado para diagnóstico
+  if (enrichedJobs.length > 0) {
+    console.log('[getJobs] Primeiro resultado enriquecido:', JSON.stringify(enrichedJobs[0], null, 2));
+  }
 
   return Response.json({
-    results: openJobs,
-    startKey: data.startKey || null,
-    total: openJobs.length,
+    results: enrichedJobs,
+    startKey: leanData.startKey || null,
+    total: enrichedJobs.length,
   });
 });
