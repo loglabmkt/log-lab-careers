@@ -17,6 +17,20 @@ export default function HeroSection() {
 
   return (
     <section className="relative w-full min-h-screen overflow-hidden flex items-center" style={{ width: "100%" }}>
+      <style>{`
+        @keyframes bounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(6px); }
+        }
+        @media (max-width: 767px) {
+          .hero-inner-wrap { padding: 80px 20px 40px !important; }
+          .hero-subtitle { font-size: 15px !important; line-height: 1.6 !important; max-width: 100% !important; margin-top: 16px !important; margin-bottom: 28px !important; }
+          .hero-cta-btn { display: block !important; width: 100% !important; text-align: center !important; padding: 16px !important; font-size: 15px !important; margin-bottom: 40px !important; }
+          .hero-right-col { width: 100% !important; flex-shrink: 1 !important; }
+          .hero-scroll-indicator { display: none !important; }
+        }
+      `}</style>
+
       <VideoBackground />
       <FloatingParticles />
 
@@ -25,7 +39,7 @@ export default function HeroSection() {
         style={{ paddingTop: "72px", minHeight: "100vh", zIndex: 10 }}
       >
         <div
-          className="w-full flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16 py-12 px-6 md:px-16"
+          className="hero-inner-wrap w-full flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16 py-12 px-6 md:px-16"
           style={{ maxWidth: "1280px", margin: "0 auto" }}
         >
           {/* Left column */}
@@ -33,7 +47,7 @@ export default function HeroSection() {
             <HeroHeadlines />
 
             <p
-              className="font-inter"
+              className="hero-subtitle font-inter"
               style={{
                 fontSize: "18px",
                 color: "rgba(255,255,255,0.80)",
@@ -53,7 +67,7 @@ export default function HeroSection() {
             >
               <a
                 href="#vagas"
-                className="inline-block font-inter font-semibold text-base px-7 py-3.5 rounded-lg transition-all duration-300 hover:bg-[#0A0A0A] hover:text-[#F5B800]"
+                className="hero-cta-btn inline-block font-inter font-semibold text-base px-7 py-3.5 rounded-lg transition-all duration-300 hover:bg-[#0A0A0A] hover:text-[#F5B800]"
                 style={{
                   backgroundColor: "#F5B800",
                   color: "#0A0A0A",
@@ -66,14 +80,15 @@ export default function HeroSection() {
           </div>
 
           {/* Right column */}
-          <div style={{ width: "420px", flexShrink: 0 }} className="w-full md:w-auto">
+          <div className="hero-right-col w-full md:w-auto" style={{ width: "420px", flexShrink: 0 }}>
             <TalentForm />
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* Scroll indicator — hidden on mobile */}
       <div
+        className="hero-scroll-indicator"
         style={{
           position: "absolute",
           bottom: "36px",
@@ -98,13 +113,6 @@ export default function HeroSection() {
           style={{ animation: "bounce 1.5s ease-in-out infinite" }}
         />
       </div>
-
-      <style>{`
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(6px); }
-        }
-      `}</style>
     </section>
   );
 }

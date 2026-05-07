@@ -86,24 +86,25 @@ function JobCard({ job, index }) {
 
   return (
     <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.45, delay: (index % 9) * 0.08 }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: hovered ? "rgba(245,184,0,0.08)" : "rgba(255,255,255,0.04)",
-        backdropFilter: "blur(20px) saturate(180%)",
-        WebkitBackdropFilter: "blur(20px) saturate(180%)",
-        border: `1px solid ${hovered ? "rgba(245,184,0,0.4)" : "rgba(255,255,255,0.08)"}`,
-        borderRadius: "20px", padding: "28px",
-        transition: "all 350ms cubic-bezier(0.34, 1.56, 0.64, 1)",
-        transform: hovered ? "translateY(-6px)" : "translateY(0)",
-        boxShadow: hovered ? "0 20px 60px rgba(245,184,0,0.12)" : "none",
-        cursor: "pointer", position: "relative", overflow: "hidden",
-        display: "flex", flexDirection: "column",
-      }}
+    ref={ref}
+    initial={{ opacity: 0, y: 20 }}
+    animate={inView ? { opacity: 1, y: 0 } : {}}
+    transition={{ duration: 0.45, delay: (index % 9) * 0.08 }}
+    onMouseEnter={() => setHovered(true)}
+    onMouseLeave={() => setHovered(false)}
+    className="vagas-card"
+    style={{
+      background: hovered ? "rgba(245,184,0,0.08)" : "rgba(255,255,255,0.04)",
+      backdropFilter: "blur(20px) saturate(180%)",
+      WebkitBackdropFilter: "blur(20px) saturate(180%)",
+      border: `1px solid ${hovered ? "rgba(245,184,0,0.4)" : "rgba(255,255,255,0.08)"}`,
+      borderRadius: "20px", padding: "28px",
+      transition: "all 350ms cubic-bezier(0.34, 1.56, 0.64, 1)",
+      transform: hovered ? "translateY(-6px)" : "translateY(0)",
+      boxShadow: hovered ? "0 20px 60px rgba(245,184,0,0.12)" : "none",
+      cursor: "pointer", position: "relative", overflow: "hidden",
+      display: "flex", flexDirection: "column",
+    }}
     >
       {hovered && (
         <div style={{
@@ -113,7 +114,7 @@ function JobCard({ job, index }) {
       )}
 
       {job.category && (
-        <div style={{
+        <div className="vagas-card-category" style={{
           display: "inline-block", background: "rgba(245,184,0,0.12)", color: "#F5B800",
           fontSize: "11px", fontWeight: 500, borderRadius: "12px", padding: "4px 10px",
           marginBottom: "16px", alignSelf: "flex-start", fontFamily: "var(--font-inter)",
@@ -122,7 +123,7 @@ function JobCard({ job, index }) {
         </div>
       )}
 
-      <p className="font-inter font-bold" style={{
+      <p className="vagas-card-title font-inter font-bold" style={{
         fontSize: "18px", color: "#FFFFFF", lineHeight: "1.3", marginBottom: "12px",
         overflow: "hidden", display: "-webkit-box",
         WebkitLineClamp: 2, WebkitBoxOrient: "vertical", textOverflow: "ellipsis",
@@ -131,28 +132,27 @@ function JobCard({ job, index }) {
       </p>
 
       <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "20px" }}>
-        <span className="font-inter" style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "5px" }}>
+        <span className="vagas-card-meta font-inter" style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "5px" }}>
           <MapPin size={13} /> {locationLabel}
         </span>
         {seniority && (
-          <span className="font-inter" style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "5px" }}>
+          <span className="vagas-card-meta font-inter" style={{ fontSize: "13px", color: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", gap: "5px" }}>
             <Briefcase size={13} /> {seniority}
           </span>
         )}
       </div>
 
-
-
       <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "20px" }} />
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }}>
-        <span className="font-inter" style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>
+        <span className="vagas-card-date font-inter" style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>
           {timeAgo(job.createdAt || job.created_at)}
         </span>
         <a
           href={`https://loglabdigital.inhire.app/vagas/${job.id}/${toSlug(job.title || job.name)}`}
           target="_blank"
           rel="noopener noreferrer"
+          className="vagas-card-btn"
           style={{
             background: hovered ? "#F5B800" : "transparent",
             border: "1px solid rgba(245,184,0,0.4)",
@@ -179,6 +179,26 @@ export default function VagasSection() {
       background: "linear-gradient(135deg, #0A0A0A 0%, #1a1200 50%, #0A0A0A 100%)",
       position: "relative", overflow: "hidden", padding: "80px 0",
     }}>
+      <style>{`
+        @media (max-width: 767px) {
+          .vagas-container { padding: 60px 20px !important; }
+          .vagas-badge { font-size: 12px !important; }
+          .vagas-headline { font-size: 32px !important; line-height: 1.2 !important; margin-bottom: 12px !important; }
+          .vagas-subtitle { font-size: 14px !important; line-height: 1.6 !important; margin-bottom: 32px !important; }
+          .vagas-filters { display: flex !important; overflow-x: auto !important; flex-wrap: nowrap !important; gap: 8px !important; margin: 0 -20px 32px !important; padding: 0 0 8px 0 !important; scrollbar-width: none !important; }
+          .vagas-filters::-webkit-scrollbar { display: none; }
+          .vagas-filter-pill { flex-shrink: 0 !important; padding: 8px 16px !important; font-size: 13px !important; }
+          .vagas-filter-pill:first-child { margin-left: 20px; }
+          .vagas-filter-pill:last-child { margin-right: 20px; }
+          .vagas-card { padding: 20px !important; border-radius: 16px !important; }
+          .vagas-card-category { font-size: 11px !important; }
+          .vagas-card-title { font-size: 16px !important; }
+          .vagas-card-meta { font-size: 12px !important; }
+          .vagas-card-date { font-size: 11px !important; }
+          .vagas-card-btn { padding: 8px 14px !important; font-size: 12px !important; }
+          .vagas-load-more { width: 100% !important; padding: 14px !important; font-size: 14px !important; }
+        }
+      `}</style>
       {/* Grid overlay */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
@@ -199,12 +219,12 @@ export default function VagasSection() {
         animationDuration: "14s", animationDirection: "reverse",
       }} />
 
-      <div style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }}>
+      <div className="vagas-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }}>
 
         {/* Header */}
         <div style={{ marginBottom: "60px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", flexWrap: "wrap" }}>
-            <div className="inline-block font-inter font-semibold" style={{
+            <div className="vagas-badge inline-block font-inter font-semibold" style={{
               fontSize: "13px", color: "#F5B800",
               border: "1px solid rgba(245,184,0,0.3)", backgroundColor: "rgba(245,184,0,0.1)",
               borderRadius: "20px", padding: "6px 16px",
@@ -212,7 +232,7 @@ export default function VagasSection() {
               ✦ Oportunidades Abertas
             </div>
             {!loading && totalJobs > 0 && (
-              <div className="font-inter" style={{
+              <div className="vagas-badge font-inter" style={{
                 fontSize: "12px", fontWeight: 500, color: "#0A0A0A",
                 backgroundColor: "#F5B800", borderRadius: "20px", padding: "4px 12px",
               }}>
@@ -221,24 +241,24 @@ export default function VagasSection() {
             )}
           </div>
 
-          <h2 className="font-inter font-bold" style={{ fontSize: "52px", color: "#FFFFFF", lineHeight: "1.1", marginBottom: "16px" }}>
+          <h2 className="vagas-headline font-inter font-bold" style={{ fontSize: "52px", color: "#FFFFFF", lineHeight: "1.1", marginBottom: "16px" }}>
             Sua próxima grande<br />
             oportunidade está{" "}
             <span style={{ color: "#F5B800" }}>aqui.</span>
           </h2>
 
-          <p className="font-inter" style={{ fontSize: "18px", color: "rgba(255,255,255,0.6)", lineHeight: "1.7", maxWidth: "560px" }}>
+          <p className="vagas-subtitle font-inter" style={{ fontSize: "18px", color: "rgba(255,255,255,0.6)", lineHeight: "1.7", maxWidth: "560px" }}>
             Encontre a vaga ideal e faça parte de um time que transforma o mercado com tecnologia e propósito.
           </p>
         </div>
 
         {/* Area filters */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "40px" }}>
+        <div className="vagas-filters" style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "40px" }}>
           {AREAS.map((area) => (
             <button
               key={area}
               onClick={() => setFilter(area)}
-              className="font-inter"
+              className="vagas-filter-pill font-inter"
               style={{
                 background: activeFilter === area ? "#F5B800" : "rgba(255,255,255,0.05)",
                 border: `1px solid ${activeFilter === area ? "#F5B800" : "rgba(255,255,255,0.1)"}`,
@@ -306,7 +326,7 @@ export default function VagasSection() {
             <button
               onClick={loadMore}
               disabled={loadingMore}
-              className="font-inter font-semibold"
+              className="vagas-load-more font-inter font-semibold"
               style={{
                 background: loadingMore ? "rgba(245,184,0,0.1)" : "transparent",
                 border: "1px solid rgba(245,184,0,0.3)", color: "#F5B800",

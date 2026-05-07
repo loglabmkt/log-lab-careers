@@ -16,9 +16,18 @@ export default function HeroHeadlines() {
 
   return (
     <div>
+      <style>{`
+        @media (max-width: 767px) {
+          .hero-badge { font-size: 12px !important; padding: 5px 14px !important; margin-bottom: 16px !important; }
+          .hero-h1 { font-size: 36px !important; word-break: keep-all; overflow-wrap: break-word; }
+          .hero-typewriter { font-size: 36px !important; }
+          .hero-typewriter-wrap { min-height: 50px !important; margin-bottom: 0 !important; }
+        }
+      `}</style>
+
       {/* Badge */}
       <div
-        className="inline-block font-inter font-semibold"
+        className="hero-badge inline-block font-inter font-semibold"
         style={{
           fontSize: "13px",
           color: "#F5B800",
@@ -34,8 +43,8 @@ export default function HeroHeadlines() {
 
       {/* Fixed headline */}
       <h1
-        className="font-inter font-bold"
-        style={{ fontSize: "62px", color: "#FFFFFF", lineHeight: "1.1", margin: 0 }}
+        className="hero-h1 font-inter font-bold"
+        style={{ fontSize: "62px", color: "#FFFFFF", lineHeight: "1.15", margin: 0 }}
       >
         Venha fazer parte
         <br />
@@ -43,9 +52,9 @@ export default function HeroHeadlines() {
       </h1>
 
       {/* Typewriter line — fixed height to prevent layout shift */}
-      <div style={{ minHeight: "72px", display: "flex", alignItems: "center" }}>
+      <div className="hero-typewriter-wrap" style={{ minHeight: "72px", display: "flex", alignItems: "center" }}>
         <span
-          className="font-inter font-bold"
+          className="hero-typewriter font-inter font-bold"
           style={{ fontSize: "62px", color: "#F5B800", lineHeight: "1.1" }}
         >
           {typed}

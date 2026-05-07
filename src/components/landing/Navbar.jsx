@@ -87,8 +87,16 @@ export default function Navbar() {
 
   return (
     <>
+      <style>{`
+        @media (max-width: 767px) {
+          .navbar-root { height: 60px !important; }
+          .navbar-inner { padding: 0 20px !important; }
+          .navbar-logo { height: 34px !important; }
+          .navbar-hamburger { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+        }
+      `}</style>
       <nav
-        className="fixed top-0 left-0 w-full z-50 flex items-center"
+        className="navbar-root fixed top-0 left-0 w-full z-50 flex items-center"
         style={{
           height: "72px",
           backgroundColor: scrolled ? "rgba(255,255,255,0.80)" : "#FFFFFF",
@@ -99,13 +107,14 @@ export default function Navbar() {
         }}
       >
         <div
-          className="w-full flex items-center justify-between"
+          className="navbar-inner w-full flex items-center justify-between"
           style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 64px" }}
         >
           {/* Logo image */}
           <img
             src="https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/20903d9b8_fb3797ffe_logotipo_loglab1.png"
             alt="Log Lab"
+            className="navbar-logo"
             style={{ height: "44px", width: "auto", cursor: "pointer" }}
             onClick={(e) => handleNavClick(e, "inicio")}
           />
@@ -146,7 +155,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile hamburger */}
-          <button className="md:hidden text-[#0A0A0A]" onClick={() => setDrawerOpen(true)}>
+          <button className="navbar-hamburger md:hidden text-[#0A0A0A]" onClick={() => setDrawerOpen(true)}>
             <Menu size={28} />
           </button>
         </div>
@@ -163,19 +172,35 @@ export default function Navbar() {
             />
             <motion.div
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 h-full w-72 z-50 p-8 flex flex-col bg-white"
+              transition={{ type: "tween", duration: 0.35 }}
+              className="fixed top-0 right-0 h-full z-50 flex flex-col bg-white"
+              style={{ width: "100%" }}
             >
-              <button className="self-end mb-8 text-[#0A0A0A]" onClick={() => setDrawerOpen(false)}>
-                <X size={28} />
-              </button>
-              <div className="flex flex-col gap-6">
+              <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 16px" }}>
+                <button
+                  onClick={() => setDrawerOpen(false)}
+                  style={{ width: "44px", height: "44px", display: "flex", alignItems: "center", justifyContent: "center", color: "#0A0A0A" }}
+                >
+                  <X size={28} />
+                </button>
+              </div>
+              <div className="flex flex-col">
                 {NAV_LINKS.map((link) => (
                   <a
                     key={link.label}
                     href={link.id ? `#${link.id}` : "#"}
-                    className="font-inter font-semibold text-lg text-[#0A0A0A]"
+                    className="font-inter font-semibold text-[#0A0A0A]"
+                    style={{
+                      padding: "18px 24px",
+                      fontSize: "17px",
+                      borderBottom: "1px solid rgba(0,0,0,0.05)",
+                      textDecoration: "none",
+                      display: "block",
+                      WebkitTapHighlightColor: "transparent",
+                    }}
                     onClick={(e) => { if (link.id) { handleNavClick(e, link.id); } else setDrawerOpen(false); }}
+                    onTouchStart={(e) => { e.currentTarget.style.background = "rgba(245,184,0,0.1)"; }}
+                    onTouchEnd={(e) => { setTimeout(() => { e.currentTarget.style.background = ""; }, 200); }}
                   >
                     {link.label}
                   </a>
@@ -183,8 +208,13 @@ export default function Navbar() {
                 <a
                   href="#vagas"
                   onClick={(e) => handleNavClick(e, "vagas")}
-                  className="font-inter font-semibold text-base text-center rounded-lg"
-                  style={{ backgroundColor: "#F5B800", color: "#0A0A0A", padding: "12px 22px", marginTop: "16px", textDecoration: "none", display: "block" }}
+                  className="font-inter font-semibold text-center rounded-lg"
+                  style={{
+                    backgroundColor: "#F5B800", color: "#0A0A0A",
+                    padding: "16px", margin: "24px",
+                    fontSize: "15px", textDecoration: "none", display: "block",
+                    borderRadius: "10px",
+                  }}
                 >
                   Ver todas as vagas
                 </a>

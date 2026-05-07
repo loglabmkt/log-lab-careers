@@ -93,6 +93,19 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ── Global mobile resets ── */
+@media (max-width: 767px) {
+  body, html {
+    overflow-x: hidden;
+  }
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  input, select, textarea, button {
+    -webkit-appearance: none;
+  }
+}
+
 section {
   margin: 0;
   padding: 0;

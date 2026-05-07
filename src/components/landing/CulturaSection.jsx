@@ -49,14 +49,14 @@ function AnimatedCount({ value, prefix = "", suffix = "" }) {
     requestAnimationFrame(tick);
   }, [inView, value]);
   return (
-    <span ref={ref} className="font-inter font-bold" style={{ fontSize: "40px", color: "#F5B800" }}>
+    <span ref={ref} className="cultura-stat-num font-inter font-bold" style={{ fontSize: "40px", color: "#F5B800" }}>
       {prefix}{count}{suffix}
     </span>
   );
 }
 
 function StaticStat({ display }) {
-  return <span className="font-inter font-bold" style={{ fontSize: "40px", color: "#F5B800" }}>{display}</span>;
+  return <span className="cultura-stat-num font-inter font-bold" style={{ fontSize: "40px", color: "#F5B800" }}>{display}</span>;
 }
 
 function DifferentialCard({ icon: Icon, title, text, delay }) {
@@ -72,6 +72,7 @@ function DifferentialCard({ icon: Icon, title, text, delay }) {
       transition={{ duration: 0.5, delay: delay / 1000 }}
       onMouseEnter={() => { setHovered(true); setIconHovered(true); }}
       onMouseLeave={() => { setHovered(false); setIconHovered(false); }}
+      className="cultura-card"
       style={{
         background: hovered ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.65)",
         backdropFilter: hovered ? "blur(30px) saturate(200%)" : "blur(20px) saturate(180%)",
@@ -93,6 +94,7 @@ function DifferentialCard({ icon: Icon, title, text, delay }) {
       }}
     >
       <div
+        className="cultura-card-icon"
         style={{
           width: "48px",
           height: "48px",
@@ -108,10 +110,10 @@ function DifferentialCard({ icon: Icon, title, text, delay }) {
       >
         <Icon size={24} color="#F5B800" />
       </div>
-      <p className="font-inter font-bold" style={{ fontSize: "18px", color: "#0A0A0A", marginBottom: "8px" }}>
+      <p className="cultura-card-title font-inter font-bold" style={{ fontSize: "18px", color: "#0A0A0A", marginBottom: "8px" }}>
         {title}
       </p>
-      <p className="font-inter" style={{ fontSize: "14px", color: "#777777", lineHeight: "1.6" }}>
+      <p className="cultura-card-text font-inter" style={{ fontSize: "14px", color: "#777777", lineHeight: "1.6" }}>
         {text}
       </p>
     </motion.div>
@@ -132,7 +134,7 @@ function CulturaHeadline() {
   const typed = useTypewriter(started ? ["logger."] : [""], 60, 3000, 30);
 
   return (
-    <h2 ref={ref} className="font-inter font-bold" style={{ fontSize: "44px", lineHeight: "1.15", color: "#0A0A0A", marginBottom: "20px" }}>
+    <h2 ref={ref} className="cultura-headline font-inter font-bold" style={{ fontSize: "44px", lineHeight: "1.15", color: "#0A0A0A", marginBottom: "20px" }}>
       Encontre seu lugar,<br />
       seja um{" "}
       <span style={{ color: "#F5B800" }}>
@@ -161,6 +163,23 @@ export default function CulturaSection() {
         overflow: "hidden",
       }}
     >
+      <style>{`
+        @media (max-width: 767px) {
+          .cultura-container { padding: 60px 20px !important; }
+          .cultura-badge { font-size: 12px !important; }
+          .cultura-headline { font-size: 32px !important; line-height: 1.2 !important; margin-bottom: 16px !important; word-wrap: break-word; overflow-wrap: break-word; hyphens: none; }
+          .cultura-body { font-size: 14px !important; line-height: 1.7 !important; margin-bottom: 32px !important; max-width: 100% !important; }
+          .cultura-stat-num { font-size: 28px !important; }
+          .cultura-stat-label { font-size: 10px !important; }
+          .cultura-stat-item { padding-left: 16px !important; padding-right: 16px !important; }
+          .cultura-stat-item:first-child { padding-left: 0 !important; }
+          .cultura-cards-col { margin-top: 40px !important; }
+          .cultura-card { padding: 20px !important; border-radius: 16px !important; min-height: unset !important; }
+          .cultura-card-icon { width: 40px !important; height: 40px !important; border-radius: 10px !important; margin-bottom: 12px !important; }
+          .cultura-card-title { font-size: 15px !important; }
+          .cultura-card-text { font-size: 13px !important; }
+        }
+      `}</style>
       {/* Decorative top line */}
       <div style={{ height: "4px", background: "linear-gradient(90deg, #F5B800 0%, transparent 100%)", width: "80px", position: "absolute", top: 0, left: "48px" }} />
 
@@ -201,7 +220,7 @@ export default function CulturaSection() {
       />
 
       {/* Container */}
-      <div style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }} className="px-6 md:px-12">
+      <div className="cultura-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "60px 48px", position: "relative", zIndex: 1 }}>
         <div className="flex flex-col md:flex-row gap-20 items-center">
 
           {/* LEFT COLUMN */}
@@ -213,7 +232,7 @@ export default function CulturaSection() {
             style={{ flex: "0 0 45%" }}
           >
             <div
-              className="inline-block font-inter font-semibold"
+              className="cultura-badge inline-block font-inter font-semibold"
               style={{ fontSize: "13px", color: "#F5B800", border: "1px solid #F5B800", backgroundColor: "rgba(245,184,0,0.08)", borderRadius: "20px", padding: "6px 16px", marginBottom: "16px" }}
             >
               Nossa Cultura
@@ -221,7 +240,7 @@ export default function CulturaSection() {
 
             <CulturaHeadline />
 
-            <p className="font-inter" style={{ fontSize: "17px", color: "#555555", lineHeight: "1.7", maxWidth: "420px", marginBottom: "48px" }}>
+            <p className="cultura-body font-inter" style={{ fontSize: "17px", color: "#555555", lineHeight: "1.7", maxWidth: "420px", marginBottom: "48px" }}>
               Aqui na Log Lab, mais de 200 pessoas fazem parte de nossos diversos times e especialidades. Cada conhecimento e cada forma de diversidade se complementam, criando um ambiente onde você pode trabalhar no que mais ama.
             </p>
 
@@ -229,14 +248,14 @@ export default function CulturaSection() {
             <div className="flex items-center flex-wrap gap-y-4">
               {STATS.map((stat, i) => (
                 <React.Fragment key={stat.label}>
-                  <div style={{ paddingLeft: i === 0 ? 0 : "24px", paddingRight: "24px" }}>
+                  <div className="cultura-stat-item" style={{ paddingLeft: i === 0 ? 0 : "24px", paddingRight: "24px" }}>
                     <div>
                       {stat.value !== null
                         ? <AnimatedCount value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
                         : <StaticStat display={stat.display} />
                       }
                     </div>
-                    <p className="font-inter" style={{ fontSize: "13px", color: "#888888", textTransform: "uppercase", letterSpacing: "1px", marginTop: "4px" }}>
+                    <p className="cultura-stat-label font-inter" style={{ fontSize: "13px", color: "#888888", textTransform: "uppercase", letterSpacing: "1px", marginTop: "4px" }}>
                       {stat.label}
                     </p>
                   </div>
@@ -247,7 +266,7 @@ export default function CulturaSection() {
           </motion.div>
 
           {/* RIGHT COLUMN — 2x2 grid */}
-          <div style={{ flex: "0 0 55%", alignSelf: "stretch", display: "flex", alignItems: "center" }}>
+          <div className="cultura-cards-col" style={{ flex: "0 0 55%", alignSelf: "stretch", display: "flex", alignItems: "center" }}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
             {CARDS.map((card, i) => (
               <DifferentialCard key={card.title} icon={card.icon} title={card.title} text={card.text} delay={i * 100} />

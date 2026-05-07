@@ -108,7 +108,7 @@ function GalleryItem({ image, isMobile, onClick }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        width: isMobile ? "calc(100% - 0px)" : "calc((100% - 40px) / 3)",
+        width: isMobile ? "80%" : "calc((100% - 40px) / 3)",
         flexShrink: 0,
         aspectRatio: "16/10",
         borderRadius: "16px",
@@ -121,6 +121,7 @@ function GalleryItem({ image, isMobile, onClick }) {
       <img
         src={image.url}
         alt={image.titulo}
+        loading="lazy"
         style={{
           width: "100%", height: "100%", objectFit: "cover",
           transition: "transform 600ms ease",
@@ -209,6 +210,7 @@ function Lightbox({ images, startIndex, onClose }) {
         style={{
           position: "absolute", left: "24px",
           width: "52px", height: "52px", borderRadius: "50%",
+          ...(window.innerWidth < 768 ? { bottom: "20px", top: "auto", left: "calc(50% - 60px)" } : {}),
           background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
           color: "#FFFFFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
           transition: "all 200ms ease",
@@ -242,6 +244,7 @@ function Lightbox({ images, startIndex, onClose }) {
         style={{
           position: "absolute", right: "24px",
           width: "52px", height: "52px", borderRadius: "50%",
+          ...(window.innerWidth < 768 ? { bottom: "20px", top: "auto", right: "calc(50% - 60px)" } : {}),
           background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.2)",
           color: "#FFFFFF", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
           transition: "all 200ms ease",
@@ -295,9 +298,20 @@ export default function LoggerSection() {
         .logger-carousel::-webkit-scrollbar { height: 4px; }
         .logger-carousel::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
         .logger-carousel::-webkit-scrollbar-thumb { background: #F5B800; border-radius: 4px; }
+        @media (max-width: 767px) {
+          .logger-section { padding: 60px 0 !important; }
+          .logger-container { padding: 0 20px !important; }
+          .logger-headline { font-size: 30px !important; line-height: 1.2 !important; margin-bottom: 12px !important; }
+          .logger-subtitle { font-size: 14px !important; line-height: 1.6 !important; margin-bottom: 40px !important; }
+          .logger-badge { font-size: 12px !important; }
+          .logger-card { padding: 20px !important; }
+          .logger-carousel-arrow { display: none !important; }
+          .logger-dot { min-height: 24px; min-width: 24px; display: flex; align-items: center; justify-content: center; }
+        }
       `}</style>
 
       <section
+        className="logger-section"
         style={{
           width: "100%", minHeight: "100vh",
           background: "linear-gradient(135deg, #fafafa 0%, #fff8e7 50%, #fafafa 100%)",
@@ -321,11 +335,11 @@ export default function LoggerSection() {
           animationDuration: "15s", animationDirection: "reverse",
         }} />
 
-        <div style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }}>
+        <div className="logger-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }}>
 
           {/* ── Header ── */}
           <div style={{ textAlign: "center", marginBottom: "60px" }}>
-            <div style={{
+            <div className="logger-badge" style={{
               display: "inline-block",
               background: "rgba(245,184,0,0.1)", border: "1px solid rgba(245,184,0,0.4)",
               color: "#F5B800", fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "13px",
@@ -334,9 +348,9 @@ export default function LoggerSection() {
               ✦ A Vida na Log
             </div>
 
-            <h2 style={{
+            <h2 className="logger-headline" style={{
               fontFamily: "var(--font-inter)", fontWeight: 700,
-              fontSize: isMobile ? "32px" : "48px",
+              fontSize: isMobile ? "30px" : "48px",
               lineHeight: "1.1", color: "#0A0A0A",
               margin: "0 0 16px",
             }}>
@@ -345,7 +359,7 @@ export default function LoggerSection() {
               {" "}é incrível
             </h2>
 
-            <p style={{
+            <p className="logger-subtitle" style={{
               fontFamily: "var(--font-inter)", fontWeight: 400, fontSize: "17px",
               color: "#555555", lineHeight: "1.6",
               maxWidth: "600px", margin: "0 auto",
@@ -377,6 +391,7 @@ export default function LoggerSection() {
             <button
               onClick={() => scrollTo("prev")}
               disabled={atStart}
+              className="logger-carousel-arrow"
               style={{
                 position: "absolute", left: "-24px", top: "50%", transform: "translateY(-50%)",
                 width: "48px", height: "48px", borderRadius: "50%", zIndex: 2,
@@ -419,6 +434,7 @@ export default function LoggerSection() {
             <button
               onClick={() => scrollTo("next")}
               disabled={atEnd}
+              className="logger-carousel-arrow"
               style={{
                 position: "absolute", right: "-24px", top: "50%", transform: "translateY(-50%)",
                 width: "48px", height: "48px", borderRadius: "50%", zIndex: 2,
