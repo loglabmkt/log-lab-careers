@@ -3,6 +3,7 @@ import Navbar from "../components/landing/Navbar";
 import HeroSection from "../components/landing/HeroSection";
 import CulturaSection from "../components/landing/CulturaSection";
 import VagasSection from "../components/landing/VagasSection";
+import LoggerSection from "../components/landing/LoggerSection";
 
 export default function Home() {
   return (
@@ -19,6 +20,10 @@ export default function Home() {
 
       <section id="vagas" style={{ margin: 0, padding: 0 }}>
         <VagasSection />
+      </section>
+
+      <section id="logger" style={{ margin: 0, padding: 0 }}>
+        <LoggerSection />
       </section>
     </div>
   );

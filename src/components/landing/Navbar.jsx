@@ -3,13 +3,11 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_LINKS = [
-  { label: "Conheça a Log", id: "inicio" },
   { label: "Cultura", id: "cultura" },
-  { label: "Log Blog", id: null },
-  { label: "Institucional", id: null },
   { label: "Faça Parte", id: "vagas" },
-
-  { label: "Eventos", id: null },
+  { label: "Logger", id: "logger" },
+  { label: "Institucional", id: null },
+  { label: "Log Blog", id: null },
 ];
 
 const SECTION_IDS = NAV_LINKS.filter((l) => l.id).map((l) => l.id);
