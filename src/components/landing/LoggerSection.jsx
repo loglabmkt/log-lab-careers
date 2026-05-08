@@ -100,54 +100,37 @@ function FeatureCard({ card, index }) {
 }
 
 // ── Gallery Item ──
-function GalleryItem({ image, isMobile, onClick }) {
+function GalleryItem({ image, onClick }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
+      className="carousel-item"
       onClick={() => onClick(image)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{
-        width: isMobile ? "80%" : "calc((100% - 40px) / 3)",
-        flexShrink: 0,
-        aspectRatio: "16/10",
-        borderRadius: "16px",
-        overflow: "hidden",
-        cursor: "pointer",
-        position: "relative",
-        scrollSnapAlign: "start",
-      }}
     >
-      <img
-        src={image.url}
-        alt={image.titulo}
-        loading="lazy"
-        style={{
-          width: "100%", height: "100%", objectFit: "cover",
-          transition: "transform 600ms ease",
-          transform: hovered ? "scale(1.08)" : "scale(1)",
-          display: "block",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%)",
-          opacity: hovered ? 1 : 0,
-          transition: "opacity 300ms ease",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute", bottom: "16px", left: "16px",
-          color: "#FFFFFF", fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "14px",
-          transform: hovered ? "translateY(0)" : "translateY(10px)",
-          opacity: hovered ? 1 : 0,
-          transition: "all 300ms ease",
-        }}
-      >
-        {image.titulo}
+      <div className="carousel-image-wrapper">
+        <img
+          src={image.url}
+          alt={image.titulo}
+          loading="lazy"
+          className="carousel-image"
+          style={{ transform: hovered ? "scale(1.08)" : "scale(1)" }}
+        />
+        <div
+          className="carousel-overlay"
+          style={{ opacity: hovered ? 1 : 0 }}
+        />
+        <div
+          className="carousel-label"
+          style={{
+            transform: hovered ? "translateY(0)" : "translateY(10px)",
+            opacity: hovered ? 1 : 0,
+          }}
+        >
+          {image.titulo}
+        </div>
       </div>
     </div>
   );
@@ -299,6 +282,13 @@ export default function LoggerSection() {
         .logger-carousel::-webkit-scrollbar { height: 4px; }
         .logger-carousel::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
         .logger-carousel::-webkit-scrollbar-thumb { background: #F5B800; border-radius: 4px; }
+        .carousel-item { flex-shrink: 0; cursor: pointer; scroll-snap-align: start; width: calc((100% - 40px) / 3); }
+        .carousel-image-wrapper { position: relative; width: 100%; height: 0; padding-bottom: 62.5%; overflow: hidden; border-radius: 16px; }
+        .carousel-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 600ms ease; }
+        .carousel-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%); transition: opacity 300ms ease; }
+        .carousel-label { position: absolute; bottom: 16px; left: 16px; color: #FFFFFF; font-family: var(--font-inter); font-weight: 600; font-size: 14px; transition: all 300ms ease; }
+        @media (min-width: 768px) { .carousel-image-wrapper { height: 240px; padding-bottom: 0; } }
+        @media (max-width: 767px) { .carousel-item { width: 80%; } .carousel-image-wrapper { height: 220px; padding-bottom: 0; } }
         @media (min-width: 768px) {
           .logger-section { padding: 80px 0 !important; }
           .logger-cards-gap { margin-bottom: 48px !important; }
@@ -424,7 +414,6 @@ export default function LoggerSection() {
                 <GalleryItem
                   key={img.id}
                   image={img}
-                  isMobile={isMobile}
                   onClick={() => setLightbox(i)}
                 />
               ))}
