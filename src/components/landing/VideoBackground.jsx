@@ -22,15 +22,28 @@ export default function VideoBackground() {
   const [error, setError] = useState(false);
   const wrapperRef = useRef(null);
 
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    const scale = isMobile ? 2.5 : 1.5;
     const onScroll = () => {
       if (!wrapperRef.current) return;
       const offset = window.scrollY * 0.4;
-      wrapperRef.current.style.transform = `translate(-50%, -50%) scale(1.5) translateY(${offset}px)`;
+      wrapperRef.current.style.transform = `translate(-50%, -50%) scale(${scale}) translateY(${offset}px)`;
     };
+    if (wrapperRef.current) {
+      wrapperRef.current.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    }
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="absolute inset-0 overflow-hidden z-0">
@@ -44,7 +57,7 @@ export default function VideoBackground() {
               position: "absolute",
               top: "50%",
               left: "50%",
-              transform: "translate(-50%, -50%) scale(1.5)",
+              transform: `translate(-50%, -50%) scale(${isMobile ? 2.5 : 1.5})`,
               width: "100%",
               height: "100%",
               minWidth: "100%",

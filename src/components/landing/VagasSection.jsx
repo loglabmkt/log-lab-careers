@@ -177,20 +177,25 @@ export default function VagasSection() {
       width: "100%", minHeight: "100vh", display: "flex", flexDirection: "column",
       justifyContent: "center",
       background: "linear-gradient(135deg, #0A0A0A 0%, #1a1200 50%, #0A0A0A 100%)",
-      position: "relative", overflow: "hidden", padding: "80px 0",
+      position: "relative", overflow: "hidden",
     }}>
       <style>{`
+        @media (min-width: 768px) {
+          .vagas-container { padding: 80px 48px !important; }
+          .vagas-header { margin-bottom: 32px !important; }
+          .vagas-filters { margin-bottom: 24px !important; }
+        }
         @media (max-width: 767px) {
-          .vagas-container { padding: 60px 20px !important; }
+          .vagas-container { padding: 48px 20px !important; min-height: auto !important; }
           .vagas-badge { font-size: 12px !important; }
           .vagas-headline { font-size: 32px !important; line-height: 1.2 !important; margin-bottom: 12px !important; }
-          .vagas-subtitle { font-size: 14px !important; line-height: 1.6 !important; margin-bottom: 32px !important; }
-          .vagas-filters { display: flex !important; overflow-x: auto !important; flex-wrap: nowrap !important; gap: 8px !important; margin: 0 -20px 32px !important; padding: 0 0 8px 0 !important; scrollbar-width: none !important; }
+          .vagas-subtitle { font-size: 14px !important; line-height: 1.6 !important; margin-bottom: 24px !important; }
+          .vagas-filters { display: flex !important; overflow-x: auto !important; flex-wrap: nowrap !important; gap: 8px !important; margin: 0 -20px 20px !important; padding: 0 0 8px 0 !important; scrollbar-width: none !important; }
           .vagas-filters::-webkit-scrollbar { display: none; }
           .vagas-filter-pill { flex-shrink: 0 !important; padding: 8px 16px !important; font-size: 13px !important; }
           .vagas-filter-pill:first-child { margin-left: 20px; }
           .vagas-filter-pill:last-child { margin-right: 20px; }
-          .vagas-card { padding: 20px !important; border-radius: 16px !important; }
+          .vagas-card { padding: 18px !important; border-radius: 16px !important; }
           .vagas-card-category { font-size: 11px !important; }
           .vagas-card-title { font-size: 16px !important; }
           .vagas-card-meta { font-size: 12px !important; }
@@ -219,10 +224,10 @@ export default function VagasSection() {
         animationDuration: "14s", animationDirection: "reverse",
       }} />
 
-      <div className="vagas-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }}>
+      <div className="vagas-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "80px 48px", position: "relative", zIndex: 1 }}>
 
         {/* Header */}
-        <div style={{ marginBottom: "60px" }}>
+        <div className="vagas-header" style={{ marginBottom: "32px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", flexWrap: "wrap" }}>
             <div className="vagas-badge inline-block font-inter font-semibold" style={{
               fontSize: "13px", color: "#F5B800",
@@ -253,7 +258,7 @@ export default function VagasSection() {
         </div>
 
         {/* Area filters */}
-        <div className="vagas-filters" style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "40px" }}>
+        <div className="vagas-filters" style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "24px" }}>
           {AREAS.map((area) => (
             <button
               key={area}
@@ -322,7 +327,7 @@ export default function VagasSection() {
 
         {/* Load more */}
         {!loading && !error && hasMore && (
-          <div style={{ textAlign: "center", marginTop: "40px" }}>
+          <div style={{ textAlign: "center", marginTop: "24px" }}>
             <button
               onClick={loadMore}
               disabled={loadingMore}
@@ -342,7 +347,7 @@ export default function VagasSection() {
         )}
 
         {/* Footer CTA */}
-        <div style={{ textAlign: "center", marginTop: "60px", padding: "40px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ textAlign: "center", marginTop: "32px", padding: "32px 0 0", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
           <p className="font-inter" style={{ color: "rgba(255,255,255,0.5)", fontSize: "15px", marginBottom: "12px" }}>
             Não encontrou sua vaga?<br />
             Cadastre-se no banco de talentos e avisaremos quando surgir algo para você.

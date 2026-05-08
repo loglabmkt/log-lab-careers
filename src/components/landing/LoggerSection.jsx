@@ -298,15 +298,20 @@ export default function LoggerSection() {
         .logger-carousel::-webkit-scrollbar { height: 4px; }
         .logger-carousel::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 4px; }
         .logger-carousel::-webkit-scrollbar-thumb { background: #F5B800; border-radius: 4px; }
+        @media (min-width: 768px) {
+          .logger-section { padding: 80px 0 !important; }
+          .logger-cards-gap { margin-bottom: 48px !important; }
+        }
         @media (max-width: 767px) {
-          .logger-section { padding: 60px 0 !important; }
+          .logger-section { padding: 48px 0 !important; min-height: auto !important; }
           .logger-container { padding: 0 20px !important; }
           .logger-headline { font-size: 30px !important; line-height: 1.2 !important; margin-bottom: 12px !important; }
-          .logger-subtitle { font-size: 14px !important; line-height: 1.6 !important; margin-bottom: 40px !important; }
+          .logger-subtitle { font-size: 14px !important; line-height: 1.6 !important; margin-bottom: 32px !important; }
           .logger-badge { font-size: 12px !important; }
           .logger-card { padding: 20px !important; }
           .logger-carousel-arrow { display: none !important; }
           .logger-dot { min-height: 24px; min-width: 24px; display: flex; align-items: center; justify-content: center; }
+          .logger-cards-gap { margin-bottom: 32px !important; }
         }
       `}</style>
 
@@ -317,7 +322,6 @@ export default function LoggerSection() {
           background: "linear-gradient(135deg, #fafafa 0%, #fff8e7 50%, #fafafa 100%)",
           position: "relative", overflow: "hidden",
           display: "flex", flexDirection: "column", justifyContent: "center",
-          padding: "100px 0",
         }}
       >
         {/* Blobs */}
@@ -335,10 +339,10 @@ export default function LoggerSection() {
           animationDuration: "15s", animationDirection: "reverse",
         }} />
 
-        <div className="logger-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "0 48px", position: "relative", zIndex: 1 }}>
+        <div className="logger-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "80px 48px", position: "relative", zIndex: 1 }}>
 
           {/* ── Header ── */}
-          <div style={{ textAlign: "center", marginBottom: "60px" }}>
+          <div style={{ textAlign: "center", marginBottom: "40px" }}>
             <div className="logger-badge" style={{
               display: "inline-block",
               background: "rgba(245,184,0,0.1)", border: "1px solid rgba(245,184,0,0.4)",
@@ -370,14 +374,9 @@ export default function LoggerSection() {
           </div>
 
           {/* ── Cards Grid ── */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: isMobile ? "1fr" : "repeat(2, 1fr)",
-            gap: "20px",
-            marginBottom: "80px",
-            ...(isMobile ? {} : { gridTemplateColumns: "repeat(4, 1fr)" }),
-          }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+          <div
+            className="logger-cards-gap grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            style={{ marginBottom: "40px" }}
           >
             {CARDS.map((card, i) => (
               <FeatureCard key={card.titulo} card={card} index={i} />

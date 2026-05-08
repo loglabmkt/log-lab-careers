@@ -164,8 +164,11 @@ export default function CulturaSection() {
       }}
     >
       <style>{`
+        @media (min-width: 768px) {
+          .cultura-container { padding: 80px 48px !important; }
+        }
         @media (max-width: 767px) {
-          .cultura-container { padding: 60px 20px !important; }
+          .cultura-container { padding: 48px 20px !important; min-height: auto !important; }
           .cultura-badge { font-size: 12px !important; }
           .cultura-headline { font-size: 32px !important; line-height: 1.2 !important; margin-bottom: 16px !important; word-wrap: break-word; overflow-wrap: break-word; hyphens: none; }
           .cultura-body { font-size: 14px !important; line-height: 1.7 !important; margin-bottom: 32px !important; max-width: 100% !important; }
@@ -173,15 +176,14 @@ export default function CulturaSection() {
           .cultura-stat-label { font-size: 10px !important; }
           .cultura-stat-item { padding-left: 16px !important; padding-right: 16px !important; }
           .cultura-stat-item:first-child { padding-left: 0 !important; }
-          .cultura-cards-col { margin-top: 40px !important; }
+          .cultura-cards-col { margin-top: 32px !important; }
           .cultura-card { padding: 20px !important; border-radius: 16px !important; min-height: unset !important; }
           .cultura-card-icon { width: 40px !important; height: 40px !important; border-radius: 10px !important; margin-bottom: 12px !important; }
           .cultura-card-title { font-size: 15px !important; }
           .cultura-card-text { font-size: 13px !important; }
         }
       `}</style>
-      {/* Decorative top line */}
-      <div style={{ height: "4px", background: "linear-gradient(90deg, #F5B800 0%, transparent 100%)", width: "80px", position: "absolute", top: 0, left: "48px" }} />
+
 
       {/* Blob 1 — top left */}
       <div
@@ -220,7 +222,7 @@ export default function CulturaSection() {
       />
 
       {/* Container */}
-      <div className="cultura-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "60px 48px", position: "relative", zIndex: 1 }}>
+      <div className="cultura-container" style={{ maxWidth: "1280px", width: "100%", margin: "0 auto", padding: "80px 48px", position: "relative", zIndex: 1 }}>
         <div className="flex flex-col md:flex-row gap-20 items-center">
 
           {/* LEFT COLUMN */}
@@ -240,7 +242,7 @@ export default function CulturaSection() {
 
             <CulturaHeadline />
 
-            <p className="cultura-body font-inter" style={{ fontSize: "17px", color: "#555555", lineHeight: "1.7", maxWidth: "420px", marginBottom: "48px" }}>
+            <p className="cultura-body font-inter" style={{ fontSize: "17px", color: "#555555", lineHeight: "1.7", maxWidth: "420px", marginBottom: "32px" }}>
               Aqui na Log Lab, mais de 200 pessoas fazem parte de nossos diversos times e especialidades. Cada conhecimento e cada forma de diversidade se complementam, criando um ambiente onde você pode trabalhar no que mais ama.
             </p>
 

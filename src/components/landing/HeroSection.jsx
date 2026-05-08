@@ -23,7 +23,7 @@ export default function HeroSection() {
           50% { transform: translateY(6px); }
         }
         @media (max-width: 767px) {
-          .hero-inner-wrap { padding: 80px 20px 40px !important; }
+          .hero-inner-wrap { padding: 24px 20px 32px !important; }
           .hero-subtitle { font-size: 15px !important; line-height: 1.6 !important; max-width: 100% !important; margin-top: 16px !important; margin-bottom: 28px !important; }
           .hero-cta-btn { display: block !important; width: 100% !important; text-align: center !important; padding: 16px !important; font-size: 15px !important; margin-bottom: 40px !important; }
           .hero-right-col { width: 100% !important; flex-shrink: 1 !important; }
