@@ -5,14 +5,15 @@ import { Heart, Target, GraduationCap, Coffee, ChevronLeft, ChevronRight, X } fr
 // GALLERY — Substitua as URLs aqui
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const galleryImages = [
-  { id: 1, url: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80", titulo: "Time em ação" },
-  { id: 2, url: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80", titulo: "Reunião colaborativa" },
-  { id: 3, url: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=80", titulo: "Workshop de inovação" },
-  { id: 4, url: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=800&q=80", titulo: "Brainstorm" },
-  { id: 5, url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80", titulo: "Confraternização" },
-  { id: 6, url: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800&q=80", titulo: "Espaço de trabalho" },
-  { id: 7, url: "https://images.unsplash.com/photo-1542626991-cbc4e32524cc?w=800&q=80", titulo: "Cerimônia ágil" },
-  { id: 8, url: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&q=80", titulo: "Celebração de conquistas" },
+  { id: 1, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/3c7aaa783_foto01.png", titulo: "Time em ação" },
+  { id: 2, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/e5cc8afa8_foto02.png", titulo: "Nosso escritório" },
+  { id: 3, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/f56a7da11_foto03.png", titulo: "Ambiente colaborativo" },
+  { id: 4, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/487dcef0f_fotos04.png", titulo: "Yunit Hub" },
+  { id: 5, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/7b665110d_foto05.png", titulo: "Espaço de convivência" },
+  { id: 6, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/666d1f15a_foto06.png", titulo: "Loggers trabalhando" },
+  { id: 7, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/ac3233129_foto10.png", titulo: "Foco e dedicação" },
+  { id: 8, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/f124b0193_foto11.png", titulo: "Celebração" },
+  { id: 9, url: "https://media.base44.com/images/public/69fa5b5b0d141e515c1300c5/098595f88_foto12.png", titulo: "Área de descanso" },
 ];
 
 const CARDS = [
