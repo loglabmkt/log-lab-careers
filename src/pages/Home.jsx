@@ -4,6 +4,7 @@ import HeroSection from "../components/landing/HeroSection";
 import CulturaSection from "../components/landing/CulturaSection";
 import VagasSection from "../components/landing/VagasSection";
 import LoggerSection from "../components/landing/LoggerSection";
+import DepoimentosSection from "../components/landing/DepoimentosSection";
 
 export default function Home() {
   return (
@@ -24,6 +25,10 @@ export default function Home() {
 
       <section id="logger" style={{ margin: 0, padding: 0 }}>
         <LoggerSection />
+      </section>
+
+      <section id="depoimentos" style={{ margin: 0, padding: 0 }}>
+        <DepoimentosSection />
       </section>
     </div>
   );

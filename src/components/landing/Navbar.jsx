@@ -7,7 +7,7 @@ const NAV_LINKS = [
   { label: "Faça Parte", id: "vagas" },
   { label: "Logger", id: "logger" },
   { label: "Institucional", id: null },
-  { label: "Log Blog", id: null },
+  { label: "Depoimentos", id: "depoimentos" },
 ];
 
 const SECTION_IDS = NAV_LINKS.filter((l) => l.id).map((l) => l.id);
