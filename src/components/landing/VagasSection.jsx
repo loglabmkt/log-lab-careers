@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Briefcase, AlertCircle, Search, Loader2 } from "lucide-react";
+import { MapPin, Briefcase, AlertCircle, Search, Loader2, ChevronDown } from "lucide-react";
 import { useInHireJobs } from "@/hooks/useInHireJobs";
+
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== "undefined" ? window.innerWidth >= 1024 : true);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isDesktop;
+}
 
 const AREAS = ["Todas", "Tecnologia", "Design", "Marketing", "Comercial", "Operações", "RH"];
 
@@ -53,7 +63,7 @@ function SkeletonCard() {
   );
 }
 
-function JobCard({ job, index }) {
+function JobCard({ job, index, isNew }) {
   const [hovered, setHovered] = useState(false);
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
@@ -89,7 +99,7 @@ function JobCard({ job, index }) {
     ref={ref}
     initial={{ opacity: 0, y: 20 }}
     animate={inView ? { opacity: 1, y: 0 } : {}}
-    transition={{ duration: 0.45, delay: (index % 9) * 0.08 }}
+    transition={{ duration: 0.45, delay: isNew ? (index % 3) * 0.08 : (index % 9) * 0.08 }}
     onMouseEnter={() => setHovered(true)}
     onMouseLeave={() => setHovered(false)}
     className="vagas-card"
@@ -170,7 +180,32 @@ function JobCard({ job, index }) {
 }
 
 export default function VagasSection() {
-  const { jobs, loading, loadingMore, error, hasMore, loadMore, activeFilter, setFilter, totalJobs, retry } = useInHireJobs();
+  const { jobs, loading, loadingMore, error, hasMore, loadMore: apiLoadMore, activeFilter, setFilter, totalJobs, retry } = useInHireJobs();
+  const isDesktop = useIsDesktop();
+  const initialCount = isDesktop ? 6 : 4;
+  const increment = isDesktop ? 3 : 2;
+  const [visibleCount, setVisibleCount] = useState(initialCount);
+  const prevVisibleRef = useRef(0);
+
+  // Reset ao trocar filtro
+  useEffect(() => {
+    setVisibleCount(initialCount);
+  }, [activeFilter, initialCount]);
+
+  const visibleJobs = jobs.slice(0, visibleCount);
+  const hasMoreToShow = visibleCount < jobs.length;
+  const mostrarBotao = hasMoreToShow || hasMore;
+
+  const handleVerMais = async () => {
+    if (hasMoreToShow) {
+      prevVisibleRef.current = visibleCount;
+      setVisibleCount(prev => prev + increment);
+    } else if (hasMore) {
+      prevVisibleRef.current = visibleCount;
+      await apiLoadMore();
+      setVisibleCount(prev => prev + increment);
+    }
+  };
 
   return (
     <section id="vagas" style={{
@@ -319,17 +354,17 @@ export default function VagasSection() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {jobs.map((job, i) => (
-              <JobCard key={job.id || job._id || i} job={job} index={i} />
+            {visibleJobs.map((job, i) => (
+              <JobCard key={job.id || job._id || i} job={job} index={i} isNew={i >= prevVisibleRef.current} />
             ))}
           </div>
         )}
 
-        {/* Load more */}
-        {!loading && !error && hasMore && (
-          <div style={{ textAlign: "center", marginTop: "24px" }}>
+        {/* Ver mais */}
+        {!loading && !error && mostrarBotao && (
+          <div style={{ textAlign: "center", marginTop: "32px" }}>
             <button
-              onClick={loadMore}
+              onClick={handleVerMais}
               disabled={loadingMore}
               className="vagas-load-more font-inter font-semibold"
               style={{
@@ -340,9 +375,18 @@ export default function VagasSection() {
                 display: "inline-flex", alignItems: "center", gap: "8px",
                 transition: "background 200ms ease",
               }}
+              onMouseEnter={(e) => { if (!loadingMore) e.currentTarget.style.background = "rgba(245,184,0,0.1)"; }}
+              onMouseLeave={(e) => { if (!loadingMore) e.currentTarget.style.background = "transparent"; }}
             >
-              {loadingMore ? <><Loader2 size={16} className="animate-spin" /> Carregando...</> : "Carregar mais vagas"}
+              {loadingMore
+                ? <><Loader2 size={16} className="animate-spin" /> Carregando...</>
+                : <><span>Ver mais vagas</span><ChevronDown size={16} style={{ animation: "chevronPulse 1.5s ease-in-out infinite" }} /></>
+              }
             </button>
+            <p className="font-inter" style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginTop: "12px" }}>
+              Mostrando {visibleJobs.length} de {hasMore ? `${jobs.length}+` : jobs.length} vagas
+            </p>
+            <style>{`@keyframes chevronPulse { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }`}</style>
           </div>
         )}
 
