@@ -4,11 +4,17 @@ import { Briefcase, User, Phone, ChevronDown, Loader2, CheckCircle } from "lucid
 import { base44 } from "@/api/base44Client";
 
 const AREAS = [
-  "Desenvolvimento",
+  "Desenvolvimento de Software",
   "Arquitetura de Software",
-  "Dados, BI & IA",
-  "Infraestrutura & Cloud",
-  "Design & UX/UI",
+  "Analista de Requisitos",
+  "QA / Testes de Software",
+  "UX/UI Design",
+  "Dados & BI",
+  "DevOps & Cloud",
+  "Infraestrutura & Suporte Técnico",
+  "Segurança da Informação",
+  "Banco de Dados (DBA)",
+  "Agile / Scrum",
   "Marketing & Comunicação",
   "Projetos & Operações",
   "Recursos Humanos",
@@ -16,9 +22,10 @@ const AREAS = [
   "Jurídico & Compliance",
   "Atendimento & Relacionamento",
   "Liderança & Gestão",
-  "Estágio / Jovem Aprendiz",
-  "Todas"
+  "Estágio / Jovem Aprendiz"
 ];
+
+
 const inputStyle = {
   background: "rgba(255,255,255,0.85)",
   backdropFilter: "blur(10px)",
