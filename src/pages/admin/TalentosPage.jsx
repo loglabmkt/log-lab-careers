@@ -150,8 +150,8 @@ export default function TalentosPage() {
       </div>
 
       {/* Tabela */}
-      <div style={{ border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", overflow: "hidden" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div style={{ border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", overflowX: "auto" }}>
+        <table style={{ width: "100%", minWidth: "900px", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "rgba(255,255,255,0.03)" }}>
               {["Nome", "WhatsApp", "E-mail", "Área", "Data", "Status", "WA", "Ações"].map(h => (
