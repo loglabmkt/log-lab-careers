@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Search, Download, Check, X, Eye, Trash2 } from "lucide-react";
+import { Search, Download, Check, X, Eye, Trash2, Pencil } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import TalentoDrawer from "@/components/admin/TalentoDrawer";
+import EditTalentoModal from "@/components/admin/EditTalentoModal";
 
 const STATUS_OPTS = [
   { value: "", label: "Todos os status" },
@@ -48,6 +49,7 @@ export default function TalentosPage() {
   const [areas, setAreas] = useState([]);
   const [drawer, setDrawer] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [editTalento, setEditTalento] = useState(null);
 
   const load = useCallback(async (pg = 1) => {
     setLoading(true);
@@ -244,6 +246,12 @@ export default function TalentosPage() {
                     >
                       <Eye size={16} />
                     </button>
+                    <button onClick={() => setEditTalento(t)} title="Editar" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: "4px" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "#F5B800"}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+                    >
+                      <Pencil size={16} />
+                    </button>
                     <button onClick={() => setDeleteConfirm(t.id)} title="Excluir" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: "4px" }}
                       onMouseEnter={e => e.currentTarget.style.color = "#f87171"}
                       onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
@@ -285,6 +293,18 @@ export default function TalentosPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Edit Modal */}
+      {editTalento && (
+        <EditTalentoModal
+          talento={editTalento}
+          onClose={() => setEditTalento(null)}
+          onSaved={updated => {
+            setItems(prev => prev.map(t => t.id === updated.id ? updated : t));
+            setEditTalento(null);
+          }}
+        />
       )}
 
       {/* Drawer */}
