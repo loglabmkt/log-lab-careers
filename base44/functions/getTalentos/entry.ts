@@ -15,7 +15,9 @@ Deno.serve(async (req) => {
   if (search) {
     const s = search.toLowerCase();
     filtered = filtered.filter(t =>
-      t.nome?.toLowerCase().includes(s) || t.whatsapp?.includes(s)
+      t.nome?.toLowerCase().includes(s) ||
+      t.whatsapp?.includes(s) ||
+      t.email?.toLowerCase().includes(s)
     );
   }
   if (status) filtered = filtered.filter(t => t.status === status);
