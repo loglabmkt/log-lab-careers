@@ -83,9 +83,10 @@ export default function TalentosPage() {
   };
 
   const handleExportCSV = () => {
-    const header = ["Nome", "WhatsApp", "Área", "Data", "Status", "AceitaWhatsapp"];
+    const header = ["Nome", "WhatsApp", "Email", "Área", "Data", "Status", "AceitaWhatsapp"];
     const rows = items.map(t => [
-      t.nome, fmtWA(t.whatsapp), t.areaInteresse,
+      t.nome, fmtWA(t.whatsapp), t.email || "",
+      t.areaInteresse,
       fmtDate(t.dataCandidatura || t.created_date),
       t.status, t.aceitaWhatsapp ? "Sim" : "Não",
     ]);
@@ -151,7 +152,7 @@ export default function TalentosPage() {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "rgba(255,255,255,0.03)" }}>
-              {["Nome", "WhatsApp", "Área", "Data", "Status", "WhatsApp", "Ações"].map(h => (
+              {["Nome", "WhatsApp", "E-mail", "Área", "Data", "Status", "WA", "Ações"].map(h => (
                 <th key={h} style={{ padding: "14px 16px", textAlign: "left", fontFamily: "var(--font-inter)", fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.6px", borderBottom: "1px solid rgba(255,255,255,0.06)", whiteSpace: "nowrap" }}>
                   {h}
                 </th>
@@ -160,9 +161,9 @@ export default function TalentosPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={7} style={{ padding: "48px", textAlign: "center", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Carregando...</td></tr>
+              <tr><td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Carregando...</td></tr>
             ) : items.length === 0 ? (
-              <tr><td colSpan={7} style={{ padding: "48px", textAlign: "center", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Nenhum talento encontrado.</td></tr>
+              <tr><td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Nenhum talento encontrado.</td></tr>
             ) : items.map(t => (
               <tr
                 key={t.id}
@@ -183,6 +184,13 @@ export default function TalentosPage() {
                 {/* WhatsApp */}
                 <td style={{ padding: "0 16px" }}>
                   <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>{fmtWA(t.whatsapp)}</span>
+                </td>
+
+                {/* E-mail */}
+                <td style={{ padding: "0 16px" }}>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: t.email ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.2)" }}>
+                    {t.email || "—"}
+                  </span>
                 </td>
 
                 {/* Área */}

@@ -3,9 +3,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.25';
 Deno.serve(async (req) => {
   const base44 = createClientFromRequest(req);
   const body = await req.json().catch(() => ({}));
-  const { nome, whatsapp, areaInteresse, aceitaWhatsapp } = body;
+  const { nome, whatsapp, email, areaInteresse, aceitaWhatsapp } = body;
 
-  // Validações
+  // Validações obrigatórias
   if (!nome || nome.trim().length < 3) {
     return Response.json({ error: 'Nome deve ter pelo menos 3 caracteres.' }, { status: 400 });
   }
@@ -19,9 +19,18 @@ Deno.serve(async (req) => {
     return Response.json({ error: 'Área de interesse é obrigatória.' }, { status: 400 });
   }
 
+  // Validação de e-mail (opcional, mas válido quando preenchido)
+  if (email && email.trim()) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      return Response.json({ error: 'E-mail inválido.' }, { status: 400 });
+    }
+  }
+
   const record = await base44.asServiceRole.entities.Talento.create({
     nome: nome.trim(),
     whatsapp: whatsappClean,
+    email: email ? email.trim().toLowerCase() : null,
     areaInteresse: areaInteresse.trim(),
     aceitaWhatsapp: !!aceitaWhatsapp,
     dataCandidatura: new Date().toISOString(),

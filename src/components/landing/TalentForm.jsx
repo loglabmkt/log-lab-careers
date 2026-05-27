@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, User, Phone, ChevronDown, Loader2, CheckCircle } from "lucide-react";
+import { Briefcase, User, Phone, Mail, ChevronDown, Loader2, CheckCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
 const AREAS = [
@@ -65,7 +65,7 @@ function GlassInput({ type = "text", placeholder, value, onChange, icon: Icon, h
 }
 
 export default function TalentForm() {
-  const [form, setForm] = useState({ name: "", phone: "", area: "", consent: false });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", area: "", consent: false });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -76,6 +76,9 @@ export default function TalentForm() {
     if (!form.name.trim()) e.name = "Nome é obrigatório";
     if (!form.phone.trim()) e.phone = "Telefone é obrigatório";
     if (!form.area) e.area = "Selecione uma área";
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      e.email = "E-mail inválido";
+    }
     return e;
   };
 
@@ -89,6 +92,7 @@ export default function TalentForm() {
     const res = await base44.functions.invoke("saveTalento", {
       nome: form.name,
       whatsapp: form.phone,
+      email: form.email.trim() || null,
       areaInteresse: form.area,
       aceitaWhatsapp: form.consent,
     });
@@ -172,6 +176,18 @@ export default function TalentForm() {
             hasError={!!errors.phone}
           />
           {errors.phone && <p className="font-inter text-xs text-red-600 mt-1">{errors.phone}</p>}
+        </div>
+
+        <div className="talent-form-input-wrap">
+          <GlassInput
+            type="email"
+            placeholder="Seu e-mail (opcional)"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            icon={Mail}
+            hasError={!!errors.email}
+          />
+          {errors.email && <p className="font-inter text-xs text-red-600 mt-1">{errors.email}</p>}
         </div>
 
         <div className="talent-form-input-wrap">

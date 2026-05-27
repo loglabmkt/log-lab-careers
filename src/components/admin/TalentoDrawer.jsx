@@ -80,6 +80,7 @@ export default function TalentoDrawer({ talento, onClose, onUpdate }) {
           {/* Campos */}
           {[
             { label: "WhatsApp", value: talento.whatsapp },
+            { label: "E-mail", value: talento.email || "—" },
             { label: "Área de interesse", value: talento.areaInteresse },
             { label: "Status", value: talento.status?.replace("_", " ") },
             { label: "Origem", value: talento.origem },
