@@ -73,6 +73,7 @@ Deno.serve(async (req) => {
     content_variables: contentVariables || {},
   };
 
+  console.log('[URL DEBUG]', process.env.WHATSAPP_API_URL);
   console.log('[WA] URL:', Deno.env.get('WHATSAPP_API_URL'));
   console.log('[WA] Payload:', JSON.stringify(payload));
   console.log('[WA] Headers x-system-id:', Deno.env.get('WHATSAPP_SYSTEM_ID'));
