@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Briefcase, User, Phone, Mail, ChevronDown, Loader2, CheckCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { formatAndValidateNumber } from "@/hooks/useWhatsApp";
 
 const AREAS = [
   "Desenvolvimento de Software",
@@ -74,7 +75,14 @@ export default function TalentForm() {
   const validate = () => {
     const e = {};
     if (!form.name.trim()) e.name = "Nome é obrigatório";
-    if (!form.phone.trim()) e.phone = "Telefone é obrigatório";
+    if (!form.phone.trim()) {
+      e.phone = "Telefone é obrigatório";
+    } else {
+      const validation = formatAndValidateNumber(form.phone);
+      if (!validation.valid) {
+        e.phone = "Por favor, insira um número de celular válido com DDD. Ex: (65) 99999-9999";
+      }
+    }
     if (!form.area) e.area = "Selecione uma área";
     if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       e.email = "E-mail inválido";

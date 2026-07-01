@@ -33,6 +33,13 @@
       "type": "string",
       "description": "Template SID da API WhatsApp (opcional)"
     },
+    "contentVariablesTemplate": {
+      "type": "object",
+      "description": "Mapeamento das vari\u00e1veis Twilio ({{1}}, {{2}}) para campos do talento. Ex: {\"1\":\"nome\",\"2\":\"area\"}",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
     "ativo": {
       "type": "boolean",
       "default": true,

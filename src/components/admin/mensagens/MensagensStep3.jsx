@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
+import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle, Copy } from "lucide-react";
 import { useWhatsApp } from "../../../hooks/useWhatsApp";
 
 function fmtWA(n = "") {
@@ -36,6 +36,7 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
     const data = await sendDisparo({
       destinatarios,
       templateSid: template?.templateSid || null,
+      contentVariablesMap: template?.contentVariablesTemplate || null,
     });
 
     setResultado({
@@ -93,13 +94,28 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
             <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
               {totalEnviados} enviada{totalEnviados !== 1 ? "s" : ""} · {totalErros} com erro
             </div>
-            <div style={{ maxWidth: "480px", margin: "16px auto 0", display: "flex", flexDirection: "column", gap: "6px", textAlign: "left" }}>
+            <div style={{ maxWidth: "520px", margin: "16px auto 0", display: "flex", flexDirection: "column", gap: "6px", textAlign: "left" }}>
               {falhos.map((f, i) => (
                 <div key={i} style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "8px", padding: "10px 14px" }}>
-                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>{f.nome}</div>
+                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>
+                    {f.nome} <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>· {fmtWA(f.whatsapp)}</span>
+                  </div>
                   <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "#f87171" }}>{f.error}</div>
                 </div>
               ))}
+              <button onClick={() => {
+                const text = falhos.map(f => `${f.nome} | ${fmtWA(f.whatsapp)} | ${f.error}`).join('\n');
+                navigator.clipboard.writeText(text);
+              }} style={{
+                display: "flex", alignItems: "center", gap: "6px", alignSelf: "center", marginTop: "6px",
+                background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px",
+                padding: "8px 14px", fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.7)", cursor: "pointer",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(245,184,0,0.4)"; e.currentTarget.style.color = "#F5B800"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
+              >
+                <Copy size={13} /> Copiar lista de erros
+              </button>
             </div>
           </>
         )}

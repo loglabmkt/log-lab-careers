@@ -10,13 +10,17 @@ Deno.serve(async (req) => {
   const user = await base44.auth.me();
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { id, nome, categoria, conteudo, ativo } = await req.json().catch(() => ({}));
+  const { id, nome, categoria, conteudo, ativo, templateSid, contentVariablesTemplate } = await req.json().catch(() => ({}));
   if (!nome || !categoria || !conteudo) {
     return Response.json({ error: 'nome, categoria e conteudo são obrigatórios' }, { status: 400 });
   }
 
   const variaveis = extractVars(conteudo);
+  // Só sobrescreve templateSid/contentVariablesTemplate se vierem na requisição
+  // (preserva os valores existentes em atualizações parciais, ex: toggle ativo)
   const data = { nome, categoria, conteudo, variaveis, ativo: ativo !== false };
+  if (templateSid !== undefined) data.templateSid = templateSid || null;
+  if (contentVariablesTemplate !== undefined) data.contentVariablesTemplate = contentVariablesTemplate || null;
 
   let result;
   if (id) {
