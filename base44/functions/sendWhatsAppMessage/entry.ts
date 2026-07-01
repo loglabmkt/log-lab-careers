@@ -7,20 +7,11 @@ function formatAndValidateNumber(num) {
   if (!digits.startsWith('55')) {
     digits = '55' + digits;
   }
-  if (digits.length !== 13) {
+  // Aceita 12 dígitos (fixo/legado) OU 13 dígitos (celular com 9)
+  if (digits.length < 12 || digits.length > 13) {
     return {
       valid: false,
-      error: `Número inválido: ${digits} (esperado 13 dígitos, recebido ${digits.length})`,
-    };
-  }
-  const ddd = parseInt(digits.slice(2, 4), 10);
-  if (ddd < 11 || ddd > 99) {
-    return { valid: false, error: `DDD inválido: ${ddd}` };
-  }
-  if (digits[4] !== '9') {
-    return {
-      valid: false,
-      error: `Número não parece ser celular (falta 9 após DDD): ${digits}`,
+      error: `Número inválido: ${digits} (esperado 12 ou 13 dígitos)`,
     };
   }
   return { valid: true, number: digits };
