@@ -37,11 +37,11 @@ export default function MensagensStep1({ selected, onNext }) {
   const toggleArea = (a) => setAreasSel(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
   const toggleStatus = (s) => setStatusSel(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
 
-  // Filtrar por área
+  // Filtrar por área — talentos com areaInteresse === "Todas" recebem vagas de qualquer área
   const byArea = allTalentos.filter(t => {
     if (apenasWA && !t.aceitaWhatsapp) return false;
     if (statusSel.length > 0 && !statusSel.includes(t.status)) return false;
-    if (areasSel.length > 0 && !areasSel.includes(t.areaInteresse)) return false;
+    if (areasSel.length > 0 && !areasSel.includes(t.areaInteresse) && t.areaInteresse !== "Todas") return false;
     return true;
   });
 
@@ -51,14 +51,14 @@ export default function MensagensStep1({ selected, onNext }) {
     if (s && !t.nome?.toLowerCase().includes(s) && !t.whatsapp?.includes(s)) return false;
     if (apenasWA && !t.aceitaWhatsapp) return false;
     if (statusSel.length > 0 && !statusSel.includes(t.status)) return false;
-    if (areasSel.length > 0 && !areasSel.includes(t.areaInteresse)) return false;
+    if (areasSel.length > 0 && !areasSel.includes(t.areaInteresse) && t.areaInteresse !== "Todas") return false;
     return true;
   });
 
   const countByArea = (area) => allTalentos.filter(t => {
     if (apenasWA && !t.aceitaWhatsapp) return false;
     if (statusSel.length > 0 && !statusSel.includes(t.status)) return false;
-    return t.areaInteresse === area;
+    return t.areaInteresse === area || t.areaInteresse === "Todas";
   }).length;
 
   const getSelected = () => {

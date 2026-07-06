@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { formatAndValidateNumber } from "@/hooks/useWhatsApp";
 
 const AREAS = [
+  "Todas",
   "Desenvolvimento de Software",
   "Arquitetura de Software",
   "Analista de Requisitos",
