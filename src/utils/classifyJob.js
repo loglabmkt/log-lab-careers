@@ -39,7 +39,7 @@ export const CATEGORY_KEYWORDS = {
     'banco de talentos', 'talent', 'hrbp', 'generalista de rh',
     'psicólogo organizacional', 'educação corporativa'
   ],
-  'Operações': [
+  'Administrativo': [
     'operações', 'operacional', 'processos', 'qualidade', 'logística',
     'supply chain', 'administração', 'administrativo', 'compras',
     'financeiro', 'contabilidade', 'fiscal', 'serviços gerais',
@@ -78,5 +78,5 @@ export function classifyJob(jobName = '', jobArea = '') {
     }
   }
 
-  return 'Operações';
+  return 'Administrativo';
 }

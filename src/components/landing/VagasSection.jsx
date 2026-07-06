@@ -13,7 +13,7 @@ function useIsDesktop() {
   return isDesktop;
 }
 
-const AREAS = ["Todas", "Tecnologia", "Design", "Marketing", "Comercial", "Operações", "RH"];
+const AREAS = ["Todas", "Tecnologia", "Design", "Marketing", "Comercial", "Administrativo", "RH"];
 
 const toSlug = (name) => {
   if (!name) return '';
