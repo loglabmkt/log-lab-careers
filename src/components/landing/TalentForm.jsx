@@ -159,7 +159,7 @@ export default function TalentForm() {
       <div className="talent-form-header flex items-center gap-3 mb-5">
         <Briefcase size={20} className="text-[#0A0A0A]" />
         <span className="font-inter font-semibold text-base text-[#0A0A0A]">
-          Receba vagas pelo WhatsApp
+          Receba alerta de vagas pelo WhatsApp
         </span>
       </div>
 
