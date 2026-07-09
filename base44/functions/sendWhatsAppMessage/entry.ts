@@ -7,7 +7,6 @@ function formatAndValidateNumber(num) {
   if (!digits.startsWith('55')) {
     digits = '55' + digits;
   }
-  // Aceita 12 dígitos (fixo/legado) OU 13 dígitos (celular com 9)
   if (digits.length < 12 || digits.length > 13) {
     return {
       valid: false,
@@ -17,12 +16,14 @@ function formatAndValidateNumber(num) {
   return { valid: true, number: digits };
 }
 
-function readableError(data) {
-  if (!data) return 'Erro desconhecido';
+function readableError(data, fallback) {
+  if (!data && !fallback) return 'Erro desconhecido';
   if (typeof data === 'string') return data;
-  const code = data.code ? ` [${data.code}]` : '';
-  const msg = data.message || data.error || JSON.stringify(data);
-  return `${msg}${code}`;
+  if (data) {
+    const msg = data.message || data.error || data.erro || JSON.stringify(data);
+    return msg;
+  }
+  return fallback || 'Erro desconhecido';
 }
 
 Deno.serve(async (req) => {
@@ -37,50 +38,43 @@ Deno.serve(async (req) => {
     }
     logs.push(`Auth: autenticado como ${user.email || user.id}`);
 
-    const { to, templateSid, contentVariables } = await req.json().catch(() => ({}));
-    logs.push(`Input recebido: to=${to}, templateSid=${templateSid}, contentVariables=${JSON.stringify(contentVariables)}`);
+    const { to, message } = await req.json().catch(() => ({}));
+    logs.push(`Input recebido: to=${to}, message=${message ? message.substring(0, 50) + '...' : '(vazio)'}`);
 
-    const url = Deno.env.get('WHATSAPP_API_URL');
-    logs.push(`URL configurada: ${url}`);
-    logs.push(`WHATSAPP_ACCOUNT_ID: ${Deno.env.get('WHATSAPP_ACCOUNT_ID')}`);
-    logs.push(`WHATSAPP_SYSTEM_ID: ${Deno.env.get('WHATSAPP_SYSTEM_ID')}`);
-    logs.push(`WHATSAPP_TOKEN (primeiros 20): ${Deno.env.get('WHATSAPP_TOKEN')?.substring(0, 20)}`);
-    logs.push(`WHATSAPP_DEFAULT_TEMPLATE_SID: ${Deno.env.get('WHATSAPP_DEFAULT_TEMPLATE_SID')}`);
+    if (!message || !String(message).trim()) {
+      logs.push('Validação: message é obrigatório');
+      return Response.json({ success: false, logs, error: 'message é obrigatório' });
+    }
 
     const validation = formatAndValidateNumber(to);
     if (!validation.valid) {
       logs.push(`Validação falhou: ${validation.error}`);
-      return Response.json({
-        success: false,
-        logs,
-        error: validation.error,
-        payloadEnviado: { to },
-      });
+      return Response.json({ success: false, logs, error: validation.error });
     }
-    const toFormatted = validation.number;
-    logs.push(`Número formatado: ${toFormatted}`);
+    const phone = validation.number;
+    logs.push(`Número formatado: ${phone}`);
 
-    const payload = {
-      whatsapp_account_id: Deno.env.get('WHATSAPP_ACCOUNT_ID'),
-      template_sid: templateSid || Deno.env.get('WHATSAPP_DEFAULT_TEMPLATE_SID'),
-      to: toFormatted,
-      content_variables: contentVariables || {},
-    };
-    logs.push(`Payload: ${JSON.stringify(payload)}`);
+    const instanceId = Deno.env.get('ZAPI_INSTANCE_ID');
+    const instanceToken = Deno.env.get('ZAPI_INSTANCE_TOKEN');
+    const clientToken = Deno.env.get('ZAPI_CLIENT_TOKEN');
 
-    const fetchUrl = Deno.env.get('WHATSAPP_API_URL');
-    const fetchHeaders = {
-      'Content-Type': 'application/json',
-      'x-system-id': Deno.env.get('WHATSAPP_SYSTEM_ID'),
-      'Authorization': `Bearer ${Deno.env.get('WHATSAPP_TOKEN')}`,
-    };
-    logs.push(`Fetch URL: ${fetchUrl}`);
-    logs.push(`Fetch headers: ${JSON.stringify({ ...fetchHeaders, Authorization: 'Bearer ' + (Deno.env.get('WHATSAPP_TOKEN')?.substring(0, 20) || '') + '...' })}`);
+    logs.push(`ZAPI_INSTANCE_ID: ${instanceId}`);
+    logs.push(`ZAPI_INSTANCE_TOKEN (6 primeiros): ${instanceToken?.substring(0, 6)}`);
+    logs.push(`ZAPI_CLIENT_TOKEN (6 primeiros): ${clientToken?.substring(0, 6)}`);
 
-    const response = await fetch(fetchUrl, {
+    const url = `https://api.z-api.io/instances/${instanceId}/token/${instanceToken}/send-text`;
+    logs.push(`URL: ${url}`);
+
+    const body = { phone, message, delayMessage: 2 };
+    logs.push(`Body: ${JSON.stringify(body)}`);
+
+    const response = await fetch(url, {
       method: 'POST',
-      headers: fetchHeaders,
-      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'Client-Token': clientToken,
+      },
+      body: JSON.stringify(body),
     });
 
     const responseText = await response.text();
@@ -95,12 +89,17 @@ Deno.serve(async (req) => {
         success: false,
         logs,
         status: response.status,
-        error: readableError(data),
-        payloadEnviado: payload,
+        error: readableError(data, responseText),
       });
     }
 
-    return Response.json({ success: true, logs, data, to: toFormatted });
+    return Response.json({
+      success: true,
+      logs,
+      zaapId: data.zaapId || null,
+      messageId: data.messageId || null,
+      to: phone,
+    });
   } catch (error) {
     logs.push(`EXCEPTION: ${error?.message || String(error)}`);
     logs.push(`STACK: ${error?.stack || 'n/a'}`);
