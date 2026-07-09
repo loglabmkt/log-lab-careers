@@ -113,6 +113,14 @@ export function useWhatsApp() {
   };
 
   const sendDisparo = async ({ destinatarios, conteudo }) => {
+    if (!conteudo || !conteudo.trim()) {
+      setSending(false);
+      return {
+        enviados: 0,
+        erros: destinatarios.length,
+        resultados: destinatarios.map(d => ({ ...d, success: false, error: 'Template sem conteúdo' })),
+      };
+    }
     setSending(true);
     setProgress({ atual: 0, total: destinatarios.length });
 

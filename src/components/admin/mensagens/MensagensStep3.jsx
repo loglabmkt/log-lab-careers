@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle, Copy } from "lucide-react";
-import { useWhatsApp } from "../../../hooks/useWhatsApp";
+import { useWhatsApp, substituirVariaveis } from "../../../hooks/useWhatsApp";
 
 function fmtWA(n = "") {
   const d = n.replace(/\D/g, "");
@@ -16,10 +16,7 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
   const { sendDisparo, progress: waProgress } = useWhatsApp();
   const progress = waProgress.total > 0 ? Math.round((waProgress.atual / waProgress.total) * 100) : 0;
 
-  const personalizar = (dest) => mensagem
-    .replace(/\[Nome\]/g, dest.nome || "")
-    .replace(/\[Area\]/g, dest.area || "")
-    .replace(/\[[^\]]+\]/g, m => m);
+  const personalizar = (dest) => substituirVariaveis(mensagem, dest);
 
   const handleSalvarRascunho = async () => {
     setSaving(true);
@@ -35,8 +32,7 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
 
     const data = await sendDisparo({
       destinatarios,
-      templateSid: template?.templateSid || null,
-      contentVariablesMap: template?.contentVariablesTemplate || null,
+      conteudo: mensagem,
     });
 
     setResultado({

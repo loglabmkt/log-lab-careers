@@ -28,8 +28,7 @@ export default function TalentoDrawer({ talento, onClose, onUpdate }) {
 
     const res = await sendIndividual({
       talento: { nome: talento.nome, whatsapp: talento.whatsapp, area: talento.areaInteresse, email: talento.email },
-      templateSid: tpl.templateSid || null,
-      contentVariablesMap: tpl.contentVariablesTemplate || null,
+      conteudo: tpl.conteudo || '',
     });
 
     setSendResult(res.success ? "ok" : (res.error || "Erro desconhecido"));
