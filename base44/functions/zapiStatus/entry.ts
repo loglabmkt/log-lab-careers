@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     logs.push(`ZAPI_INSTANCE_TOKEN (6 primeiros): ${instanceToken?.substring(0, 6)}`);
 
     const url = `https://api.z-api.io/instances/${instanceId}/token/${instanceToken}/status`;
-    logs.push(`URL: ${url}`);
+    logs.push(`URL: https://api.z-api.io/instances/${instanceId}/token/${instanceToken?.substring(0, 6)}.../status`);
 
     const response = await fetch(url, {
       method: 'GET',

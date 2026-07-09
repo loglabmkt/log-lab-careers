@@ -5,9 +5,11 @@ export function substituirVariaveis(template, talento) {
   return template
     .replace(/\[Nome\]/g, talento.nome || '')
     .replace(/\[Area\]/g, talento.area || talento.areaInteresse || '')
-    .replace(/\[LinkSite\]/g, 'https://log-lab-careers.base44.app')
+    .replace(/\[LinkSite\]/g, 'https://carreira.loglabdigital.com.br')
     .replace(/\[NomeVaga\]/g, talento.nomeVaga || '')
     .replace(/\[LinkVaga\]/g, talento.linkVaga || '')
+    .replace(/\[Modalidade\]/g, talento.modalidade || '')
+    .replace(/\[Hora\]/g, new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }))
     .replace(/\[Data\]/g, new Date().toLocaleDateString('pt-BR'));
 }
 
@@ -62,18 +64,16 @@ export function buildContentVariables(contentVariablesMap, talento) {
   return contentVariables;
 }
 
-async function sendMessage({ to, templateSid, contentVariables }) {
+async function sendMessage({ to, message }) {
   const res = await base44.functions.invoke('sendWhatsAppMessage', {
     to,
-    templateSid: templateSid || null,
-    contentVariables: contentVariables || {},
+    message,
   });
 
   const result = res.data;
 
   if (!result.success) {
     console.error('[useWhatsApp] Erro completo:', result);
-    console.log('[useWhatsApp] Payload foi:', result.payloadEnviado);
   }
 
   return result;
@@ -84,8 +84,13 @@ export function useWhatsApp() {
   const [progress, setProgress] = useState({ atual: 0, total: 0 });
   const [results, setResults] = useState([]);
 
-  const sendIndividual = async ({ talento, templateSid, contentVariablesMap }) => {
+  const sendIndividual = async ({ talento, conteudo }) => {
     setSending(true);
+
+    if (!conteudo || !conteudo.trim()) {
+      setSending(false);
+      return { success: false, error: 'Template sem conteúdo' };
+    }
 
     // Validação ANTES da chamada à API
     const validation = formatAndValidateNumber(talento.whatsapp);
@@ -95,11 +100,10 @@ export function useWhatsApp() {
       return { success: false, error: validation.error };
     }
 
-    const contentVariables = buildContentVariables(contentVariablesMap, talento);
+    const message = substituirVariaveis(conteudo, talento);
     const resultado = await sendMessage({
       to: validation.number,
-      templateSid,
-      contentVariables,
+      message,
     });
     if (!resultado.success) {
       console.error(`[WhatsApp] Falha: ${talento.nome} - ${resultado.error}`);
@@ -108,7 +112,7 @@ export function useWhatsApp() {
     return resultado;
   };
 
-  const sendDisparo = async ({ destinatarios, templateSid, contentVariablesMap }) => {
+  const sendDisparo = async ({ destinatarios, conteudo }) => {
     setSending(true);
     setProgress({ atual: 0, total: destinatarios.length });
 
@@ -124,11 +128,10 @@ export function useWhatsApp() {
         console.error(`[WhatsApp] Falha: ${dest.nome} - ${validation.error}`);
         resultado = { success: false, error: validation.error };
       } else {
-        const contentVariables = buildContentVariables(contentVariablesMap, dest);
+        const message = substituirVariaveis(conteudo, dest);
         resultado = await sendMessage({
           to: validation.number,
-          templateSid,
-          contentVariables,
+          message,
         });
         if (!resultado.success) {
           console.error(`[WhatsApp] Falha: ${dest.nome} - ${resultado.error}`);

@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
     logs.push(`ZAPI_CLIENT_TOKEN (6 primeiros): ${clientToken?.substring(0, 6)}`);
 
     const url = `https://api.z-api.io/instances/${instanceId}/token/${instanceToken}/send-text`;
-    logs.push(`URL: ${url}`);
+    logs.push(`URL: https://api.z-api.io/instances/${instanceId}/token/${instanceToken?.substring(0, 6)}.../send-text`);
 
     const body = { phone, message, delayMessage: 2 };
     logs.push(`Body: ${JSON.stringify(body)}`);
