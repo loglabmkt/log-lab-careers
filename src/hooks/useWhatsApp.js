@@ -9,6 +9,7 @@ export function substituirVariaveis(template, talento) {
     .replace(/\[NomeVaga\]/g, talento.nomeVaga || '')
     .replace(/\[LinkVaga\]/g, talento.linkVaga || '')
     .replace(/\[Modalidade\]/g, talento.modalidade || '')
+    .replace(/\[Cidade\]/g, talento.cidade || '')
     .replace(/\[Hora\]/g, new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }))
     .replace(/\[Data\]/g, new Date().toLocaleDateString('pt-BR'));
 }
