@@ -43,7 +43,7 @@ export default function LoginPage() {
 
     try {
       await base44.auth.loginViaEmailPassword(email, password);
-      await checkAppState();
+      window.location.href = returnTo;
     } catch (err) {
       if (err.status === 401) {
         setError("Email ou senha incorretos");
