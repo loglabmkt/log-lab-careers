@@ -11,7 +11,7 @@ export default function AdminLayout() {
   useEffect(() => {
     base44.auth.me()
       .then(u => { setUser(u); setLoading(false); })
-      .catch(() => { base44.auth.redirectToLogin("/admin"); });
+      .catch(() => { navigate('/login', { state: { returnTo: '/admin' }, replace: true }); });
   }, []);
 
   if (loading) {
