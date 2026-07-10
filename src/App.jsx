@@ -14,6 +14,12 @@ import MensagensPage from './pages/admin/MensagensPage';
 import TemplatesPage from './pages/admin/TemplatesPage';
 // Add page imports here
 import LoginPage from './pages/auth/LoginPage';
+import SignupPage from './pages/auth/SignupPage';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
+import ResetPasswordPage from './pages/auth/ResetPasswordPage';
+
+// Rotas de autenticação acessíveis sem login
+const AUTH_PATHS = ['/login', '/cadastro', '/esqueci-senha', '/redefinir-senha'];
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
@@ -21,7 +27,7 @@ const AuthenticatedApp = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (authError?.type === 'auth_required' && location.pathname !== '/login') {
+    if (authError?.type === 'auth_required' && !AUTH_PATHS.includes(location.pathname)) {
       navigate('/login', { state: { returnTo: location.pathname + location.search }, replace: true });
     }
   }, [authError, location.pathname, location.search, navigate]);
@@ -41,8 +47,8 @@ const AuthenticatedApp = () => {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
       // Redirect to internal /login page (useEffect handles navigation)
-      if (location.pathname !== '/login') return null;
-      // On /login — fall through to render routes
+      if (!AUTH_PATHS.includes(location.pathname)) return null;
+      // Em rota de auth — segue para renderizar as rotas
     }
   }
 
@@ -51,6 +57,9 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/cadastro" element={<SignupPage />} />
+      <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
+      <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<TalentosPage />} />
         <Route path="talentos" element={<TalentosPage />} />
