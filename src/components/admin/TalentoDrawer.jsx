@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Check, CheckCircle2, XCircle } from "lucide-react";
+import { X, CheckCircle2, XCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { useWhatsApp } from "../../hooks/useWhatsApp";
 import { format } from "date-fns";

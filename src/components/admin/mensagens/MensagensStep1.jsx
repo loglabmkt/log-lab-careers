@@ -12,8 +12,8 @@ const STATUS_OPTS = [
 ];
 
 const inputStyle = {
-  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: "8px", padding: "9px 12px", color: "#FFFFFF",
+  background: "rgba(255,255,255,0.7)", border: "1px solid rgba(10,10,10,0.08)",
+  borderRadius: "10px", padding: "9px 12px", color: "#0A0A0A",
   fontFamily: "var(--font-inter)", fontSize: "14px", outline: "none",
 };
 
@@ -76,13 +76,15 @@ export default function MensagensStep1({ selected, onNext }) {
   return (
     <div>
       {/* Tabs */}
-      <div style={{ display: "flex", gap: "4px", marginBottom: "24px", background: "rgba(255,255,255,0.05)", borderRadius: "8px", padding: "4px", width: "fit-content" }}>
+      <div style={{ display: "flex", gap: "4px", marginBottom: "24px", background: "rgba(10,10,10,0.05)", borderRadius: "10px", padding: "4px", width: "fit-content" }}>
         {[["area", "Por Área"], ["individual", "Individual"]].map(([v, l]) => (
           <button key={v} onClick={() => setTab(v)} style={{
-            padding: "7px 18px", borderRadius: "6px", border: "none", cursor: "pointer",
-            background: tab === v ? "#F5B800" : "transparent",
-            color: tab === v ? "#0A0A0A" : "rgba(255,255,255,0.5)",
+            padding: "7px 18px", borderRadius: "7px", border: "none", cursor: "pointer",
+            background: tab === v ? "#F5B600" : "transparent",
+            color: tab === v ? "#0A0A0A" : "rgba(10,10,10,0.5)",
             fontFamily: "var(--font-inter)", fontWeight: tab === v ? 600 : 400, fontSize: "13px",
+            boxShadow: tab === v ? "0 2px 8px rgba(245,182,0,0.3)" : "none",
+            transition: "all 180ms ease",
           }}>
             {l}
           </button>
@@ -94,25 +96,26 @@ export default function MensagensStep1({ selected, onNext }) {
         <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
           <div
             onClick={() => setApenasWA(v => !v)}
-            style={{ width: "36px", height: "20px", borderRadius: "10px", background: apenasWA ? "#F5B800" : "rgba(255,255,255,0.15)", position: "relative", cursor: "pointer", transition: "background 200ms", flexShrink: 0 }}
+            style={{ width: "36px", height: "20px", borderRadius: "10px", background: apenasWA ? "#F5B600" : "rgba(10,10,10,0.15)", position: "relative", cursor: "pointer", transition: "background 200ms", flexShrink: 0 }}
           >
-            <span style={{ position: "absolute", top: "2px", left: apenasWA ? "18px" : "2px", width: "16px", height: "16px", borderRadius: "50%", background: "#fff", transition: "left 200ms" }} />
+            <span style={{ position: "absolute", top: "2px", left: apenasWA ? "18px" : "2px", width: "16px", height: "16px", borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgba(10,10,10,0.2)", transition: "left 200ms" }} />
           </div>
-          <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.7)" }}>Apenas quem aceitou WhatsApp</span>
+          <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.65)" }}>Apenas quem aceitou WhatsApp</span>
         </label>
       </div>
 
       <div style={{ display: "flex", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
         <div>
-          <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(255,255,255,0.4)", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Filtrar por status</div>
+          <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(10,10,10,0.45)", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Filtrar por status</div>
           <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
             {STATUS_OPTS.map(s => (
               <button key={s.value} onClick={() => toggleStatus(s.value)} style={{
                 padding: "4px 10px", borderRadius: "20px", border: "1px solid",
-                borderColor: statusSel.includes(s.value) ? "#F5B800" : "rgba(255,255,255,0.1)",
-                background: statusSel.includes(s.value) ? "rgba(245,184,0,0.15)" : "transparent",
-                color: statusSel.includes(s.value) ? "#F5B800" : "rgba(255,255,255,0.5)",
-                fontFamily: "var(--font-inter)", fontSize: "12px", cursor: "pointer",
+                borderColor: statusSel.includes(s.value) ? "#F5B600" : "rgba(10,10,10,0.12)",
+                background: statusSel.includes(s.value) ? "rgba(245,182,0,0.15)" : "rgba(255,255,255,0.5)",
+                color: statusSel.includes(s.value) ? "#8a6d00" : "rgba(10,10,10,0.5)",
+                fontFamily: "var(--font-inter)", fontSize: "12px", fontWeight: statusSel.includes(s.value) ? 600 : 400, cursor: "pointer",
+                transition: "all 150ms ease",
               }}>
                 {s.label}
               </button>
@@ -124,27 +127,28 @@ export default function MensagensStep1({ selected, onNext }) {
       {/* Tab conteúdo */}
       {tab === "area" ? (
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginBottom: "24px" }}>
-          {loading ? <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Carregando...</p> : (
+          {loading ? <p style={{ color: "rgba(10,10,10,0.45)", fontFamily: "var(--font-inter)" }}>Carregando...</p> : (
             AREAS.map(area => {
               const count = countByArea(area);
               const checked = areasSel.includes(area);
               return (
                 <label key={area} onClick={() => toggleArea(area)} style={{
                   display: "flex", alignItems: "center", gap: "12px",
-                  padding: "14px 16px", borderRadius: "8px", cursor: "pointer",
-                  background: checked ? "rgba(245,184,0,0.08)" : "rgba(255,255,255,0.03)",
-                  border: `1px solid ${checked ? "rgba(245,184,0,0.3)" : "rgba(255,255,255,0.06)"}`,
+                  padding: "14px 16px", borderRadius: "12px", cursor: "pointer",
+                  background: checked ? "rgba(245,182,0,0.10)" : "rgba(255,255,255,0.5)",
+                  border: `1px solid ${checked ? "rgba(245,182,0,0.45)" : "rgba(10,10,10,0.06)"}`,
                   transition: "all 150ms",
                 }}>
                   <div style={{
-                    width: "18px", height: "18px", borderRadius: "4px", border: `2px solid ${checked ? "#F5B800" : "rgba(255,255,255,0.2)"}`,
-                    background: checked ? "#F5B800" : "transparent", flexShrink: 0,
+                    width: "18px", height: "18px", borderRadius: "5px", border: `2px solid ${checked ? "#F5B600" : "rgba(10,10,10,0.25)"}`,
+                    background: checked ? "#F5B600" : "transparent", flexShrink: 0,
                     display: "flex", alignItems: "center", justifyContent: "center",
+                    transition: "all 150ms",
                   }}>
                     {checked && <span style={{ color: "#0A0A0A", fontSize: "11px", fontWeight: 700 }}>✓</span>}
                   </div>
-                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF", flex: 1 }}>{area}</span>
-                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.4)" }}>{count} cadastro{count !== 1 ? "s" : ""}</span>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#0A0A0A", flex: 1, fontWeight: checked ? 600 : 400 }}>{area}</span>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.45)" }}>{count} cadastro{count !== 1 ? "s" : ""}</span>
                 </label>
               );
             })
@@ -153,30 +157,30 @@ export default function MensagensStep1({ selected, onNext }) {
       ) : (
         <div style={{ marginBottom: "24px" }}>
           <div style={{ position: "relative", marginBottom: "14px" }}>
-            <Search size={15} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.4)" }} />
+            <Search size={15} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "rgba(10,10,10,0.35)" }} />
             <input placeholder="Buscar por nome ou WhatsApp..." value={search} onChange={e => setSearch(e.target.value)}
               style={{ ...inputStyle, paddingLeft: "34px", width: "100%", boxSizing: "border-box" }} />
           </div>
           <div style={{ maxHeight: "320px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "4px" }}>
-            {loading ? <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Carregando...</p> :
+            {loading ? <p style={{ color: "rgba(10,10,10,0.45)", fontFamily: "var(--font-inter)" }}>Carregando...</p> :
               byIndiv.map(t => {
                 const sel = indivSel.has(t.id);
                 return (
                   <label key={t.id} onClick={() => setIndivSel(prev => { const n = new Set(prev); sel ? n.delete(t.id) : n.add(t.id); return n; })} style={{
                     display: "flex", alignItems: "center", gap: "10px",
-                    padding: "10px 12px", borderRadius: "8px", cursor: "pointer",
-                    background: sel ? "rgba(245,184,0,0.06)" : "transparent",
+                    padding: "10px 12px", borderRadius: "10px", cursor: "pointer",
+                    background: sel ? "rgba(245,182,0,0.10)" : "transparent",
                     transition: "background 150ms",
                   }}>
-                    <div style={{ width: "16px", height: "16px", borderRadius: "4px", border: `2px solid ${sel ? "#F5B800" : "rgba(255,255,255,0.2)"}`, background: sel ? "#F5B800" : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ width: "16px", height: "16px", borderRadius: "5px", border: `2px solid ${sel ? "#F5B600" : "rgba(10,10,10,0.25)"}`, background: sel ? "#F5B600" : "transparent", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", transition: "all 150ms" }}>
                       {sel && <span style={{ color: "#0A0A0A", fontSize: "10px", fontWeight: 700 }}>✓</span>}
                     </div>
-                    <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#F5B800", color: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "12px", flexShrink: 0 }}>
+                    <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#F5B600", color: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "12px", flexShrink: 0 }}>
                       {(t.nome || "?")[0].toUpperCase()}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>{t.nome}</div>
-                      <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{t.whatsapp} · {t.areaInteresse}</div>
+                      <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#0A0A0A" }}>{t.nome}</div>
+                      <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)" }}>{t.whatsapp} · {t.areaInteresse}</div>
                     </div>
                   </label>
                 );
@@ -188,16 +192,18 @@ export default function MensagensStep1({ selected, onNext }) {
 
       {/* Counter + Botão */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: total > 0 ? "#F5B800" : "rgba(255,255,255,0.4)", fontWeight: total > 0 ? 600 : 400 }}>
+        <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: total > 0 ? "#8a6d00" : "rgba(10,10,10,0.45)", fontWeight: total > 0 ? 600 : 400 }}>
           {total} destinatário{total !== 1 ? "s" : ""} selecionado{total !== 1 ? "s" : ""}
         </div>
         <button onClick={handleNext} disabled={total === 0} style={{
           display: "flex", alignItems: "center", gap: "7px",
-          background: total > 0 ? "#F5B800" : "rgba(255,255,255,0.1)",
-          border: "none", borderRadius: "8px", padding: "10px 20px",
-          color: total > 0 ? "#0A0A0A" : "rgba(255,255,255,0.3)",
+          background: total > 0 ? "#F5B600" : "rgba(10,10,10,0.06)",
+          border: "none", borderRadius: "10px", padding: "10px 20px",
+          color: total > 0 ? "#0A0A0A" : "rgba(10,10,10,0.3)",
           fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "14px",
           cursor: total > 0 ? "pointer" : "not-allowed",
+          boxShadow: total > 0 ? "0 4px 14px rgba(245,182,0,0.3)" : "none",
+          transition: "all 180ms ease",
         }}>
           Próximo <ChevronRight size={16} />
         </button>

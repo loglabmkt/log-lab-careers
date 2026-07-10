@@ -18,19 +18,19 @@ export default function AdminSidebar({ user }) {
   return (
     <aside style={{
       width: "240px", flexShrink: 0, height: "100vh", position: "sticky", top: 0,
-      background: "rgba(255,255,255,0.6)",
-      backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)",
-      borderRight: "1px solid rgba(10,10,10,0.06)",
-      boxShadow: "0 8px 32px rgba(10,10,10,0.04)",
+      background: "rgba(255,255,255,0.55)",
+      backdropFilter: "blur(24px) saturate(180%)", WebkitBackdropFilter: "blur(24px) saturate(180%)",
+      borderRight: "1px solid rgba(255,255,255,0.6)",
+      boxShadow: "0 8px 32px rgba(10,10,10,0.05), inset -1px 0 0 rgba(10,10,10,0.04), inset 1px 1px 0 rgba(255,255,255,0.7)",
       display: "flex", flexDirection: "column", padding: "28px 16px",
       zIndex: 1,
     }}>
       {/* Logo */}
       <div style={{ marginBottom: "40px", paddingLeft: "8px" }}>
         <img
-          src="https://www.loglabdigital.com.br/wp-content/uploads/2026/07/log_full_black.svg"
+          src="https://www.loglabdigital.com.br/wp-content/uploads/2026/07/log_full_.svg"
           alt="Log Lab"
-          style={{ height: "30px", width: "auto", display: "block" }}
+          style={{ height: "34px", width: "auto", display: "block" }}
         />
         <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(10,10,10,0.45)", marginTop: "6px" }}>
           Portal Administrativo

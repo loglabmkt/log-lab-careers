@@ -10,6 +10,13 @@ function fmtWA(n = "") {
   return n;
 }
 
+const btnGhost = {
+  display: "flex", alignItems: "center", gap: "6px", padding: "10px 18px",
+  background: "rgba(255,255,255,0.6)", border: "1px solid rgba(10,10,10,0.08)",
+  borderRadius: "10px", color: "#0A0A0A", fontFamily: "var(--font-inter)", cursor: "pointer",
+  transition: "all 150ms",
+};
+
 export default function MensagensStep3({ destinatarios, template, mensagem, vaga, onBack, onFinish }) {
   const [state, setState] = useState("idle"); // idle | sending | done | error
   const [resultado, setResultado] = useState(null);
@@ -51,13 +58,13 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
   if (state === "sending") {
     return (
       <div style={{ textAlign: "center", padding: "48px 0" }}>
-        <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "18px", color: "#FFFFFF", marginBottom: "24px" }}>
+        <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "18px", color: "#0A0A0A", marginBottom: "24px" }}>
           Enviando mensagens...
         </div>
-        <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: "100px", height: "8px", width: "100%", maxWidth: "420px", margin: "0 auto 12px", overflow: "hidden" }}>
-          <div style={{ height: "100%", background: "#F5B800", borderRadius: "100px", width: `${progress}%`, transition: "width 200ms ease" }} />
+        <div style={{ background: "rgba(10,10,10,0.07)", borderRadius: "100px", height: "8px", width: "100%", maxWidth: "420px", margin: "0 auto 12px", overflow: "hidden" }}>
+          <div style={{ height: "100%", background: "#F5B600", borderRadius: "100px", width: `${progress}%`, transition: "width 200ms ease", boxShadow: "0 0 8px rgba(245,182,0,0.5)" }} />
         </div>
-        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.5)" }}>
+        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.5)" }}>
           {Math.round(progress)}% — aguarde...
         </div>
       </div>
@@ -73,34 +80,34 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
       <div style={{ textAlign: "center", padding: "40px 0" }}>
         {totalErros === 0 ? (
           <>
-            <CheckCircle2 size={56} color="#4ade80" style={{ margin: "0 auto 16px" }} />
-            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+            <CheckCircle2 size={56} color="#22c55e" style={{ margin: "0 auto 16px" }} />
+            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#0A0A0A", marginBottom: "8px" }}>
               {totalEnviados} mensage{totalEnviados !== 1 ? "ns enviadas" : "m enviada"} com sucesso!
             </div>
           </>
         ) : totalEnviados === 0 ? (
           <>
-            <XCircle size={56} color="#f87171" style={{ margin: "0 auto 16px" }} />
-            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+            <XCircle size={56} color="#ef4444" style={{ margin: "0 auto 16px" }} />
+            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#0A0A0A", marginBottom: "8px" }}>
               Falha no envio. Verifique a conexão com a API.
             </div>
-            <button onClick={handleEnviar} style={{ marginTop: "16px", padding: "10px 24px", background: "#F5B800", border: "none", borderRadius: "8px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, cursor: "pointer" }}>
+            <button onClick={handleEnviar} style={{ marginTop: "16px", padding: "10px 24px", background: "#F5B600", border: "none", borderRadius: "10px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(245,182,0,0.3)" }}>
               Tentar novamente
             </button>
           </>
         ) : (
           <>
-            <AlertTriangle size={56} color="#F5B800" style={{ margin: "0 auto 16px" }} />
-            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+            <AlertTriangle size={56} color="#F5B600" style={{ margin: "0 auto 16px" }} />
+            <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#0A0A0A", marginBottom: "8px" }}>
               {totalEnviados} enviada{totalEnviados !== 1 ? "s" : ""} · {totalErros} com erro
             </div>
             <div style={{ maxWidth: "520px", margin: "16px auto 0", display: "flex", flexDirection: "column", gap: "6px", textAlign: "left" }}>
               {falhos.map((f, i) => (
-                <div key={i} style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "8px", padding: "10px 14px" }}>
-                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>
-                    {f.nome} <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "12px" }}>· {fmtWA(f.whatsapp)}</span>
+                <div key={i} style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.18)", borderRadius: "10px", padding: "10px 14px" }}>
+                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#0A0A0A" }}>
+                    {f.nome} <span style={{ color: "rgba(10,10,10,0.45)", fontSize: "12px" }}>· {fmtWA(f.whatsapp)}</span>
                   </div>
-                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "#f87171" }}>{f.error}</div>
+                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "#dc2626" }}>{f.error}</div>
                 </div>
               ))}
               <button onClick={() => {
@@ -108,11 +115,12 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
                 navigator.clipboard.writeText(text);
               }} style={{
                 display: "flex", alignItems: "center", gap: "6px", alignSelf: "center", marginTop: "6px",
-                background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px",
-                padding: "8px 14px", fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.7)", cursor: "pointer",
+                background: "rgba(255,255,255,0.6)", border: "1px solid rgba(10,10,10,0.08)", borderRadius: "10px",
+                padding: "8px 14px", fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.65)", cursor: "pointer",
+                transition: "all 150ms",
               }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(245,184,0,0.4)"; e.currentTarget.style.color = "#F5B800"; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = "#F5B600"; e.currentTarget.style.color = "#0A0A0A"; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(10,10,10,0.08)"; e.currentTarget.style.color = "rgba(10,10,10,0.65)"; }}
               >
                 <Copy size={13} /> Copiar lista de erros
               </button>
@@ -127,11 +135,11 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
   if (state === "error") {
     return (
       <div style={{ textAlign: "center", padding: "48px 0" }}>
-        <XCircle size={56} color="#f87171" style={{ margin: "0 auto 16px" }} />
-        <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#FFFFFF", marginBottom: "8px" }}>
+        <XCircle size={56} color="#ef4444" style={{ margin: "0 auto 16px" }} />
+        <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "20px", color: "#0A0A0A", marginBottom: "8px" }}>
           Erro ao conectar com a API.
         </div>
-        <button onClick={() => setState("idle")} style={{ marginTop: "16px", padding: "10px 24px", background: "#F5B800", border: "none", borderRadius: "8px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, cursor: "pointer" }}>
+        <button onClick={() => setState("idle")} style={{ marginTop: "16px", padding: "10px 24px", background: "#F5B600", border: "none", borderRadius: "10px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(245,182,0,0.3)" }}>
           Tentar novamente
         </button>
       </div>
@@ -143,28 +151,28 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
     <div>
       {/* Resumo */}
       <div style={{ display: "flex", gap: "16px", marginBottom: "24px", flexWrap: "wrap" }}>
-        <div style={{ flex: 1, minWidth: "200px", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "20px" }}>
-          <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "8px" }}>Destinatários</div>
-          <div style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "28px", color: "#F5B800" }}>{destinatarios.length}</div>
+        <div style={{ flex: 1, minWidth: "200px", background: "rgba(255,255,255,0.55)", border: "1px solid rgba(10,10,10,0.06)", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 8px rgba(10,10,10,0.03)" }}>
+          <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "8px" }}>Destinatários</div>
+          <div style={{ fontFamily: "var(--font-inter)", fontWeight: 800, fontSize: "28px", color: "#0A0A0A" }}>{destinatarios.length}</div>
         </div>
-        <div style={{ flex: 2, minWidth: "200px", background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "12px", padding: "20px" }}>
-          <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "8px" }}>Template</div>
-          <div style={{ fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "16px", color: "#FFFFFF" }}>{template?.nome || "Mensagem personalizada"}</div>
+        <div style={{ flex: 2, minWidth: "200px", background: "rgba(255,255,255,0.55)", border: "1px solid rgba(10,10,10,0.06)", borderRadius: "14px", padding: "20px", boxShadow: "0 2px 8px rgba(10,10,10,0.03)" }}>
+          <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)", textTransform: "uppercase", letterSpacing: "0.6px", marginBottom: "8px" }}>Template</div>
+          <div style={{ fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "16px", color: "#0A0A0A" }}>{template?.nome || "Mensagem personalizada"}</div>
         </div>
       </div>
 
       {/* Lista destinatários */}
       <div style={{ marginBottom: "20px" }}>
-        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "10px" }}>Destinatários:</div>
-        <div style={{ maxHeight: "260px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "4px", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px", padding: "8px" }}>
+        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.45)", marginBottom: "10px" }}>Destinatários:</div>
+        <div style={{ maxHeight: "260px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "4px", border: "1px solid rgba(10,10,10,0.06)", borderRadius: "12px", padding: "8px", background: "rgba(255,255,255,0.4)" }}>
           {destinatarios.map((d, i) => (
-            <div key={d.id || i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", borderRadius: "6px" }}>
-              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#F5B800", color: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "12px", flexShrink: 0 }}>
+            <div key={d.id || i} style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 10px", borderRadius: "8px" }}>
+              <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#F5B600", color: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "12px", flexShrink: 0 }}>
                 {(d.nome || "?")[0].toUpperCase()}
               </div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#FFFFFF" }}>{d.nome}</div>
-                <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>{fmtWA(d.whatsapp)} · {d.area}</div>
+                <div style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "#0A0A0A" }}>{d.nome}</div>
+                <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)" }}>{fmtWA(d.whatsapp)} · {d.area}</div>
               </div>
             </div>
           ))}
@@ -173,9 +181,9 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
 
       {/* Preview */}
       <div style={{ marginBottom: "24px" }}>
-        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "10px" }}>Preview da mensagem:</div>
-        <div style={{ background: "#075e54", borderRadius: "12px", padding: "16px" }}>
-          <div style={{ background: "#dcf8c6", borderRadius: "8px", padding: "12px 14px", maxWidth: "85%", marginLeft: "auto", fontFamily: "var(--font-inter)", fontSize: "13px", color: "#111", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
+        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.45)", marginBottom: "10px" }}>Preview da mensagem:</div>
+        <div style={{ background: "#e5ddd5", borderRadius: "14px", padding: "16px", border: "1px solid rgba(10,10,10,0.06)" }}>
+          <div style={{ background: "#dcf8c6", borderRadius: "10px", padding: "12px 14px", maxWidth: "85%", marginLeft: "auto", fontFamily: "var(--font-inter)", fontSize: "13px", color: "#111", whiteSpace: "pre-wrap", lineHeight: "1.6", boxShadow: "0 1px 2px rgba(10,10,10,0.12)" }}>
             {destComVaga[0] ? personalizar(destComVaga[0]) : mensagem}
           </div>
         </div>
@@ -183,14 +191,14 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
 
       {/* Botões */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <button onClick={onBack} style={{ display: "flex", alignItems: "center", gap: "6px", padding: "10px 18px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#FFFFFF", fontFamily: "var(--font-inter)", cursor: "pointer" }}>
+        <button onClick={onBack} style={btnGhost}>
           <ChevronLeft size={16} /> Voltar
         </button>
         <div style={{ display: "flex", gap: "10px" }}>
-          <button onClick={handleSalvarRascunho} disabled={saving} style={{ padding: "10px 18px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#FFFFFF", fontFamily: "var(--font-inter)", cursor: "pointer", opacity: saving ? 0.7 : 1 }}>
+          <button onClick={handleSalvarRascunho} disabled={saving} style={{ ...btnGhost, opacity: saving ? 0.7 : 1 }}>
             {saving ? "Salvando..." : "Salvar Rascunho"}
           </button>
-          <button onClick={handleEnviar} style={{ padding: "10px 20px", background: "#F5B800", border: "none", borderRadius: "8px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "14px", cursor: "pointer" }}>
+          <button onClick={handleEnviar} style={{ padding: "10px 20px", background: "#F5B600", border: "none", borderRadius: "10px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "14px", cursor: "pointer", boxShadow: "0 4px 14px rgba(245,182,0,0.3)", transition: "all 180ms" }}>
             Enviar Agora
           </button>
         </div>

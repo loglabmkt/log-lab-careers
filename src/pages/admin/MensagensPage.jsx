@@ -8,6 +8,14 @@ import DisparosHistorico from "@/components/admin/mensagens/DisparosHistorico";
 
 const STEPS = ["Destinatários", "Mensagem", "Confirmar"];
 
+const glassPanel = {
+  background: "rgba(255,255,255,0.55)",
+  backdropFilter: "blur(24px) saturate(180%)", WebkitBackdropFilter: "blur(24px) saturate(180%)",
+  border: "1px solid rgba(255,255,255,0.65)",
+  borderRadius: "20px", padding: "28px",
+  boxShadow: "0 8px 32px rgba(10,10,10,0.06), inset 1px 1px 0 rgba(255,255,255,0.75), inset -1px -1px 1px rgba(10,10,10,0.03)",
+};
+
 export default function MensagensPage() {
   const location = useLocation();
   const [step, setStep] = useState(1);
@@ -56,14 +64,14 @@ export default function MensagensPage() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: "28px" }}>
-        <h1 style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "24px", color: "#FFFFFF", margin: 0 }}>Mensagens</h1>
-        <p style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(255,255,255,0.5)", margin: "4px 0 0" }}>Disparos de WhatsApp para talentos cadastrados</p>
+        <h1 style={{ fontFamily: "var(--font-inter)", fontWeight: 800, fontSize: "24px", color: "#0A0A0A", margin: 0 }}>Mensagens</h1>
+        <p style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(10,10,10,0.55)", margin: "4px 0 0" }}>Disparos de WhatsApp para talentos cadastrados</p>
       </div>
 
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "28px" }} />
+      <div style={{ height: "1px", background: "rgba(10,10,10,0.05)", marginBottom: "28px" }} />
 
       {/* Stepper */}
-      <div style={{ display: "flex", alignItems: "center", gap: "0", marginBottom: "32px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "0", marginBottom: "28px" }}>
         {STEPS.map((s, i) => {
           const num = i + 1;
           const active = step === num;
@@ -73,19 +81,21 @@ export default function MensagensPage() {
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <div style={{
                   width: "28px", height: "28px", borderRadius: "50%", flexShrink: 0,
-                  background: done ? "#4ade80" : active ? "#F5B800" : "rgba(255,255,255,0.1)",
-                  color: done || active ? "#0A0A0A" : "rgba(255,255,255,0.4)",
+                  background: done ? "#22c55e" : active ? "#F5B600" : "rgba(10,10,10,0.07)",
+                  color: done ? "#FFFFFF" : active ? "#0A0A0A" : "rgba(10,10,10,0.4)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "13px",
+                  boxShadow: active ? "0 4px 14px rgba(245,182,0,0.35)" : "none",
+                  transition: "all 200ms ease",
                 }}>
                   {done ? "✓" : num}
                 </div>
-                <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", fontWeight: active ? 600 : 400, color: active ? "#FFFFFF" : done ? "#4ade80" : "rgba(255,255,255,0.4)" }}>
+                <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", fontWeight: active ? 600 : 400, color: active ? "#0A0A0A" : done ? "#15803d" : "rgba(10,10,10,0.4)" }}>
                   {s}
                 </span>
               </div>
               {i < STEPS.length - 1 && (
-                <div style={{ flex: 1, height: "1px", background: done ? "#4ade80" : "rgba(255,255,255,0.1)", margin: "0 12px" }} />
+                <div style={{ flex: 1, height: "1px", background: done ? "#22c55e" : "rgba(10,10,10,0.1)", margin: "0 12px" }} />
               )}
             </React.Fragment>
           );
@@ -93,35 +103,37 @@ export default function MensagensPage() {
       </div>
 
       {/* Steps */}
-      {step === 1 && (
-        <MensagensStep1
-          selected={destinatarios}
-          onNext={(list) => { setDestinatarios(list); setStep(2); }}
-        />
-      )}
-      {step === 2 && (
-        <MensagensStep2
-          destinatarios={destinatarios}
-          initialTemplateId={location.state?.templateId}
-          onNext={(tpl, msg, vg) => { setTemplate(tpl); setMensagem(msg); setVaga(vg); setStep(3); }}
-          onBack={() => setStep(1)}
-        />
-      )}
-      {step === 3 && (
-        <MensagensStep3
-          destinatarios={destinatarios}
-          template={template}
-          mensagem={mensagem}
-          vaga={vaga}
-          onBack={() => setStep(2)}
-          onFinish={handleFinish}
-        />
-      )}
+      <div style={glassPanel}>
+        {step === 1 && (
+          <MensagensStep1
+            selected={destinatarios}
+            onNext={(list) => { setDestinatarios(list); setStep(2); }}
+          />
+        )}
+        {step === 2 && (
+          <MensagensStep2
+            destinatarios={destinatarios}
+            initialTemplateId={location.state?.templateId}
+            onNext={(tpl, msg, vg) => { setTemplate(tpl); setMensagem(msg); setVaga(vg); setStep(3); }}
+            onBack={() => setStep(1)}
+          />
+        )}
+        {step === 3 && (
+          <MensagensStep3
+            destinatarios={destinatarios}
+            template={template}
+            mensagem={mensagem}
+            vaga={vaga}
+            onBack={() => setStep(2)}
+            onFinish={handleFinish}
+          />
+        )}
+      </div>
 
       {/* Histórico */}
       <div style={{ marginTop: "48px" }}>
-        <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "24px" }} />
-        <h2 style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "18px", color: "#FFFFFF", marginBottom: "16px" }}>Histórico de Disparos</h2>
+        <div style={{ height: "1px", background: "rgba(10,10,10,0.05)", marginBottom: "24px" }} />
+        <h2 style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "18px", color: "#0A0A0A", marginBottom: "16px" }}>Histórico de Disparos</h2>
         <DisparosHistorico items={disparos} loading={loadingDisparos} />
       </div>
     </div>

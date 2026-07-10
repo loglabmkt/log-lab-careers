@@ -4,7 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 
-const LOGO_URL = "https://www.loglabdigital.com.br/wp-content/uploads/2026/07/log_full_black.svg";
+const LOGO_URL = "https://www.loglabdigital.com.br/wp-content/uploads/2026/07/log_full_.svg";
 
 function GoogleIcon({ size = 18 }) {
   return (
@@ -64,7 +64,7 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen relative overflow-hidden flex items-center justify-center"
-      style={{ background: "linear-gradient(135deg, #fafafa 0%, #fff8e7 50%, #fafafa 100%)", padding: "24px" }}
+      style={{ background: "linear-gradient(135deg, #fbfaf7 0%, #fff6dd 45%, #faf9f6 100%)", padding: "24px", "--font-inter": "'Google Sans Flex', 'Inter', -apple-system, sans-serif" }}
     >
       <style>{`
         .ll-input:focus { border-color: #F5B600 !important; box-shadow: 0 0 0 3px rgba(245,182,0,0.15) !important; }

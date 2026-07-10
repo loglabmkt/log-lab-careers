@@ -199,7 +199,7 @@ export default function TalentosPage() {
 
                 {/* WhatsApp */}
                 <td style={{ padding: "0 16px" }}>
-                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(10,10,10,0.65)" }}>{fmtWA(t.whatsapp)}</span>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(10,10,10,0.65)", whiteSpace: "nowrap" }}>{fmtWA(t.whatsapp)}</span>
                 </td>
 
                 {/* E-mail */}

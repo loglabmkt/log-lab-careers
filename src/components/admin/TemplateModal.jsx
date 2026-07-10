@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { X, Plus, Trash2 } from "lucide-react";
 
 const CATEGORIAS = ["Vaga aberta", "Boas-vindas", "Entrevista", "Follow-up", "Aprovação", "Personalizado"];
@@ -31,9 +31,13 @@ const EXEMPLOS = {
 
 const s = {
   input: {
-    width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-    borderRadius: "8px", padding: "10px 14px", color: "#FFFFFF",
+    width: "100%", background: "rgba(255,255,255,0.7)", border: "1px solid rgba(10,10,10,0.08)",
+    borderRadius: "10px", padding: "10px 14px", color: "#0A0A0A",
     fontFamily: "var(--font-inter)", fontSize: "14px", outline: "none", boxSizing: "border-box",
+  },
+  label: {
+    display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)",
+    marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px",
   },
 };
 
@@ -90,19 +94,21 @@ export default function TemplateModal({ template, onClose, onSave }) {
 
   return (
     <>
-      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 40 }} />
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(10,10,10,0.25)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", zIndex: 40 }} />
       <div style={{
         position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
         width: "680px", maxWidth: "95vw", maxHeight: "90vh", overflowY: "auto",
-        background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.1)",
-        borderRadius: "16px", zIndex: 50, padding: "28px",
+        background: "rgba(255,255,255,0.9)", backdropFilter: "blur(24px) saturate(180%)", WebkitBackdropFilter: "blur(24px) saturate(180%)",
+        border: "1px solid rgba(255,255,255,0.7)",
+        borderRadius: "20px", zIndex: 50, padding: "28px",
+        boxShadow: "0 24px 64px rgba(10,10,10,0.18), inset 1px 1px 0 rgba(255,255,255,0.8)",
       }}>
         {/* Header */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
-          <h2 style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "18px", color: "#FFFFFF", margin: 0 }}>
+          <h2 style={{ fontFamily: "var(--font-inter)", fontWeight: 800, fontSize: "18px", color: "#0A0A0A", margin: 0 }}>
             {template ? "Editar Template" : "Novo Template"}
           </h2>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.5)" }}>
+          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(10,10,10,0.45)" }}>
             <X size={20} />
           </button>
         </div>
@@ -110,21 +116,21 @@ export default function TemplateModal({ template, onClose, onSave }) {
         <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
           {/* Nome */}
           <div>
-            <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Nome do template</label>
+            <label style={s.label}>Nome do template</label>
             <input value={form.nome} onChange={e => setForm(f => ({ ...f, nome: e.target.value }))} placeholder="Ex: Vaga de Desenvolvedor" style={s.input} />
           </div>
 
           {/* Categoria */}
           <div>
-            <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Categoria</label>
+            <label style={s.label}>Categoria</label>
             <select value={form.categoria} onChange={e => setForm(f => ({ ...f, categoria: e.target.value }))} style={{ ...s.input, cursor: "pointer" }}>
-              {CATEGORIAS.map(c => <option key={c} value={c} style={{ background: "#1a1a1a" }}>{c}</option>)}
+              {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
 
           {/* Conteúdo */}
           <div>
-            <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Conteúdo da mensagem</label>
+            <label style={s.label}>Conteúdo da mensagem</label>
             <textarea
               ref={textareaRef}
               value={form.conteudo}
@@ -137,46 +143,46 @@ export default function TemplateModal({ template, onClose, onSave }) {
 
           {/* Template SID */}
           <div>
-            <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "6px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Template SID (WhatsApp API)</label>
+            <label style={s.label}>Template SID (WhatsApp API)</label>
             <input value={form.templateSid} onChange={e => setForm(f => ({ ...f, templateSid: e.target.value }))} placeholder="HXce43d376230cc7aada1ceef67d307ace" style={s.input} />
-            <p style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", margin: "4px 0 0" }}>Opcional. Deixe vazio para usar o template padrão.</p>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)", margin: "4px 0 0" }}>Opcional. Deixe vazio para usar o template padrão.</p>
           </div>
 
           {/* Mapeamento de variáveis Twilio */}
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: "16px" }}>
-            <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "4px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Mapeamento de variáveis (opcional)</label>
-            <p style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.35)", margin: "0 0 12px", lineHeight: 1.5 }}>
-              Se seu template Twilio usa <span style={{ color: "#F5B800", fontFamily: "monospace" }}>{"{{1}}"}</span>, <span style={{ color: "#F5B800", fontFamily: "monospace" }}>{"{{2}}"}</span>, etc., mapeie cada variável ao campo correspondente.
+          <div style={{ borderTop: "1px solid rgba(10,10,10,0.06)", paddingTop: "16px" }}>
+            <label style={{ ...s.label, marginBottom: "4px" }}>Mapeamento de variáveis (opcional)</label>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.4)", margin: "0 0 12px", lineHeight: 1.5 }}>
+              Se seu template Twilio usa <span style={{ color: "#8a6d00", fontFamily: "monospace" }}>{"{{1}}"}</span>, <span style={{ color: "#8a6d00", fontFamily: "monospace" }}>{"{{2}}"}</span>, etc., mapeie cada variável ao campo correspondente.
             </p>
 
             {varRows.length === 0 && (
-              <p style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.25)", margin: "0 0 10px" }}>
+              <p style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.3)", margin: "0 0 10px" }}>
                 Nenhuma variável mapeada. O envio usará <span style={{ fontFamily: "monospace" }}>content_variables: {"{}"}</span>.
               </p>
             )}
 
             {varRows.map((row, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-                <div style={{ display: "flex", alignItems: "center", background: "rgba(245,184,0,0.1)", border: "1px solid rgba(245,184,0,0.3)", borderRadius: "8px", padding: "0 10px", flexShrink: 0 }}>
-                  <span style={{ fontFamily: "monospace", fontSize: "13px", color: "#F5B800" }}>{"{{"}</span>
+                <div style={{ display: "flex", alignItems: "center", background: "rgba(245,182,0,0.12)", border: "1px solid rgba(245,182,0,0.35)", borderRadius: "8px", padding: "0 10px", flexShrink: 0 }}>
+                  <span style={{ fontFamily: "monospace", fontSize: "13px", color: "#8a6d00" }}>{"{{"}</span>
                   <input
                     value={row.numero}
                     onChange={e => updateVarRow(i, "numero", e.target.value.replace(/\D/g, ""))}
                     placeholder="1"
-                    style={{ width: "28px", background: "transparent", border: "none", color: "#F5B800", fontFamily: "monospace", fontSize: "13px", textAlign: "center", outline: "none", padding: "8px 0" }}
+                    style={{ width: "28px", background: "transparent", border: "none", color: "#8a6d00", fontFamily: "monospace", fontSize: "13px", textAlign: "center", outline: "none", padding: "8px 0" }}
                   />
-                  <span style={{ fontFamily: "monospace", fontSize: "13px", color: "#F5B800" }}>{"}}"}</span>
+                  <span style={{ fontFamily: "monospace", fontSize: "13px", color: "#8a6d00" }}>{"}}"}</span>
                 </div>
-                <span style={{ color: "rgba(255,255,255,0.3)", fontFamily: "var(--font-inter)" }}>→</span>
+                <span style={{ color: "rgba(10,10,10,0.35)", fontFamily: "var(--font-inter)" }}>→</span>
                 <select
                   value={row.campo}
                   onChange={e => updateVarRow(i, "campo", e.target.value)}
                   style={{ ...s.input, flex: 1, cursor: "pointer" }}
                 >
-                  {TWILIO_CAMPOS.map(c => <option key={c.value} value={c.value} style={{ background: "#1a1a1a" }}>{c.label}</option>)}
+                  {TWILIO_CAMPOS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
                 </select>
                 <button onClick={() => removeVarRow(i)} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(239,68,68,0.6)", padding: "4px", flexShrink: 0 }}
-                  onMouseEnter={e => e.currentTarget.style.color = "#f87171"}
+                  onMouseEnter={e => e.currentTarget.style.color = "#dc2626"}
                   onMouseLeave={e => e.currentTarget.style.color = "rgba(239,68,68,0.6)"}
                 >
                   <Trash2 size={15} />
@@ -186,12 +192,12 @@ export default function TemplateModal({ template, onClose, onSave }) {
 
             <button onClick={addVarRow} style={{
               display: "flex", alignItems: "center", gap: "6px",
-              background: "rgba(255,255,255,0.05)", border: "1px dashed rgba(255,255,255,0.2)",
-              borderRadius: "8px", padding: "8px 14px", fontFamily: "var(--font-inter)", fontSize: "13px",
-              color: "rgba(255,255,255,0.7)", cursor: "pointer", transition: "all 150ms",
+              background: "rgba(255,255,255,0.6)", border: "1px dashed rgba(10,10,10,0.2)",
+              borderRadius: "10px", padding: "8px 14px", fontFamily: "var(--font-inter)", fontSize: "13px",
+              color: "rgba(10,10,10,0.65)", cursor: "pointer", transition: "all 150ms",
             }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(245,184,0,0.4)"; e.currentTarget.style.color = "#F5B800"; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"; e.currentTarget.style.color = "rgba(255,255,255,0.7)"; }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "#F5B600"; e.currentTarget.style.color = "#8a6d00"; }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(10,10,10,0.2)"; e.currentTarget.style.color = "rgba(10,10,10,0.65)"; }}
             >
               <Plus size={14} /> Adicionar variável
             </button>
@@ -199,18 +205,18 @@ export default function TemplateModal({ template, onClose, onSave }) {
 
           {/* Variáveis */}
           <div>
-            <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.6px" }}>
+            <label style={{ ...s.label, marginBottom: "8px" }}>
               Inserir variável (clique para inserir no cursor)
             </label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
               {VARIAVEIS.map(v => (
                 <button key={v} onClick={() => handleVarClick(v)} style={{
-                  background: "rgba(245,184,0,0.1)", color: "#F5B800", border: "1px solid rgba(245,184,0,0.3)",
+                  background: "rgba(245,182,0,0.12)", color: "#8a6d00", border: "1px solid rgba(245,182,0,0.35)",
                   borderRadius: "20px", padding: "4px 10px", fontFamily: "var(--font-inter)", fontSize: "12px",
-                  fontWeight: 500, cursor: "pointer", transition: "background 150ms",
+                  fontWeight: 600, cursor: "pointer", transition: "background 150ms",
                 }}
-                  onMouseEnter={e => e.currentTarget.style.background = "rgba(245,184,0,0.2)"}
-                  onMouseLeave={e => e.currentTarget.style.background = "rgba(245,184,0,0.1)"}
+                  onMouseEnter={e => e.currentTarget.style.background = "rgba(245,182,0,0.22)"}
+                  onMouseLeave={e => e.currentTarget.style.background = "rgba(245,182,0,0.12)"}
                 >
                   {v}
                 </button>
@@ -221,12 +227,13 @@ export default function TemplateModal({ template, onClose, onSave }) {
           {/* Preview */}
           {form.conteudo && (
             <div>
-              <label style={{ display: "block", fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.6px" }}>Preview (com valores de exemplo)</label>
-              <div style={{ background: "#075e54", borderRadius: "12px", padding: "16px", maxHeight: "180px", overflowY: "auto" }}>
+              <label style={{ ...s.label, marginBottom: "8px" }}>Preview (com valores de exemplo)</label>
+              <div style={{ background: "#e5ddd5", borderRadius: "14px", padding: "16px", maxHeight: "180px", overflowY: "auto", border: "1px solid rgba(10,10,10,0.06)" }}>
                 <div style={{
-                  background: "#dcf8c6", borderRadius: "8px", padding: "12px 14px",
+                  background: "#dcf8c6", borderRadius: "10px", padding: "12px 14px",
                   fontFamily: "var(--font-inter)", fontSize: "13px", color: "#111",
                   whiteSpace: "pre-wrap", lineHeight: "1.6", maxWidth: "90%", marginLeft: "auto",
+                  boxShadow: "0 1px 2px rgba(10,10,10,0.12)",
                 }}>
                   {form.conteudo.replace(/\[([^\]]+)\]/g, (match) => {
                     const val = EXEMPLOS[match] || match;
@@ -239,13 +246,14 @@ export default function TemplateModal({ template, onClose, onSave }) {
 
           {/* Botões */}
           <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "8px" }}>
-            <button onClick={onClose} style={{ padding: "10px 20px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#FFFFFF", fontFamily: "var(--font-inter)", cursor: "pointer" }}>
+            <button onClick={onClose} style={{ padding: "10px 20px", background: "rgba(255,255,255,0.6)", border: "1px solid rgba(10,10,10,0.08)", borderRadius: "10px", color: "#0A0A0A", fontFamily: "var(--font-inter)", cursor: "pointer" }}>
               Cancelar
             </button>
             <button onClick={handleSubmit} disabled={saving || !form.nome || !form.conteudo} style={{
-              padding: "10px 24px", background: "#F5B800", border: "none", borderRadius: "8px",
+              padding: "10px 24px", background: "#F5B600", border: "none", borderRadius: "10px",
               color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "14px",
               cursor: saving ? "default" : "pointer", opacity: (!form.nome || !form.conteudo) ? 0.5 : 1,
+              boxShadow: "0 4px 14px rgba(245,182,0,0.3)",
             }}>
               {saving ? "Salvando..." : "Salvar Template"}
             </button>
