@@ -65,10 +65,13 @@ export function buildContentVariables(contentVariablesMap, talento) {
   return contentVariables;
 }
 
-async function sendMessage({ to, message }) {
+async function sendMessage({ to, message, disparoId, talentoId, nome }) {
   const res = await base44.functions.invoke('sendWhatsAppMessage', {
     to,
     message,
+    disparoId: disparoId || null,
+    talentoId: talentoId || null,
+    nome: nome || null,
   });
 
   const result = res.data;
@@ -105,6 +108,8 @@ export function useWhatsApp() {
     const resultado = await sendMessage({
       to: validation.number,
       message,
+      talentoId: talento.id || null,
+      nome: talento.nome || null,
     });
     if (!resultado.success) {
       console.error(`[WhatsApp] Falha: ${talento.nome} - ${resultado.error}`);
@@ -113,7 +118,7 @@ export function useWhatsApp() {
     return resultado;
   };
 
-  const sendDisparo = async ({ destinatarios, conteudo }) => {
+  const sendDisparo = async ({ destinatarios, conteudo, disparoId }) => {
     if (!conteudo || !conteudo.trim()) {
       setSending(false);
       return {
@@ -141,6 +146,9 @@ export function useWhatsApp() {
         resultado = await sendMessage({
           to: validation.number,
           message,
+          disparoId: disparoId || null,
+          talentoId: dest.id || null,
+          nome: dest.nome || null,
         });
         if (!resultado.success) {
           console.error(`[WhatsApp] Falha: ${dest.nome} - ${resultado.error}`);

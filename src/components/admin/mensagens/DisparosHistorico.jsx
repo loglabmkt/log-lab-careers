@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { X } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import { X, RefreshCw } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { base44 } from "@/api/base44Client";
 
 const STATUS_STYLE = {
   rascunho: { bg: "rgba(10,10,10,0.06)", color: "rgba(10,10,10,0.55)" },
@@ -16,6 +17,16 @@ const STATUS_LABEL = {
   concluido: "Concluído", erro: "Erro",
 };
 
+// Status de entrega por mensagem (via webhook Z-API)
+const ENVIO_STATUS = {
+  enviado: { label: "Enviado ✓", bg: "rgba(10,10,10,0.06)", color: "rgba(10,10,10,0.55)" },
+  entregue: { label: "Entregue ✓✓", bg: "rgba(59,130,246,0.12)", color: "#2563eb" },
+  lido: { label: "Lido ✓✓", bg: "rgba(34,197,94,0.12)", color: "#15803d" },
+  erro: { label: "Erro", bg: "rgba(239,68,68,0.12)", color: "#dc2626" },
+};
+
+const soDigitos = (n = "") => String(n).replace(/\D/g, "");
+
 const glass = {
   background: "rgba(255,255,255,0.55)",
   backdropFilter: "blur(24px) saturate(180%)", WebkitBackdropFilter: "blur(24px) saturate(180%)",
@@ -25,6 +36,32 @@ const glass = {
 
 export default function DisparosHistorico({ items, loading }) {
   const [detail, setDetail] = useState(null);
+  const [envioLogs, setEnvioLogs] = useState([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+
+  const loadLogs = useCallback(async (disparoId) => {
+    if (!disparoId) return;
+    setLoadingLogs(true);
+    try {
+      const res = await base44.functions.invoke("getEnvioLogs", { disparoId });
+      setEnvioLogs(res.data?.items || []);
+    } catch {
+      setEnvioLogs([]);
+    } finally {
+      setLoadingLogs(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (detail?.id) loadLogs(detail.id);
+    else setEnvioLogs([]);
+  }, [detail?.id, loadLogs]);
+
+  // Log mais recente por destinatário (talentoId, com fallback por número)
+  const logDoDest = (d) => {
+    return envioLogs.find(l => d.id && l.talentoId === d.id)
+      || envioLogs.find(l => soDigitos(l.whatsapp).endsWith(soDigitos(d.whatsapp).slice(-8)) && soDigitos(d.whatsapp).length > 0);
+  };
 
   if (loading) return <p style={{ color: "rgba(10,10,10,0.45)", fontFamily: "var(--font-inter)" }}>Carregando...</p>;
   if (!items.length) return <p style={{ color: "rgba(10,10,10,0.45)", fontFamily: "var(--font-inter)" }}>Nenhum disparo realizado ainda.</p>;
@@ -94,17 +131,34 @@ export default function DisparosHistorico({ items, loading }) {
                 </div>
               ))}
               <div>
-                <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(10,10,10,0.4)", textTransform: "uppercase", letterSpacing: "0.8px", marginBottom: "8px" }}>Destinatários ({detail.destinatarios?.length || 0})</div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+                  <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(10,10,10,0.4)", textTransform: "uppercase", letterSpacing: "0.8px" }}>Destinatários ({detail.destinatarios?.length || 0})</div>
+                  <button onClick={() => loadLogs(detail.id)} disabled={loadingLogs} title="Atualizar status de entrega" style={{ display: "flex", alignItems: "center", gap: "5px", background: "none", border: "none", cursor: loadingLogs ? "default" : "pointer", color: "rgba(10,10,10,0.45)", fontFamily: "var(--font-inter)", fontSize: "12px", padding: "2px 4px", transition: "color 150ms" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "#0A0A0A"}
+                    onMouseLeave={e => e.currentTarget.style.color = "rgba(10,10,10,0.45)"}
+                  >
+                    <RefreshCw size={12} className={loadingLogs ? "animate-spin" : ""} /> Atualizar
+                  </button>
+                </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px", maxHeight: "200px", overflowY: "auto" }}>
-                  {(detail.destinatarios || []).map((d, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 10px", background: "rgba(10,10,10,0.03)", borderRadius: "8px" }}>
-                      <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#F5B600", color: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "10px", flexShrink: 0 }}>
-                        {(d.nome || "?")[0].toUpperCase()}
+                  {(detail.destinatarios || []).map((d, i) => {
+                    const log = logDoDest(d);
+                    const st = log ? ENVIO_STATUS[log.status] : null;
+                    return (
+                      <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 10px", background: "rgba(10,10,10,0.03)", borderRadius: "8px" }}>
+                        <div style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#F5B600", color: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "10px", flexShrink: 0 }}>
+                          {(d.nome || "?")[0].toUpperCase()}
+                        </div>
+                        <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "#0A0A0A", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{d.nome}</div>
+                        {st && (
+                          <span title={log.status === "erro" ? (log.erro || "Erro no envio") : undefined} style={{ background: st.bg, color: st.color, borderRadius: "20px", padding: "2px 8px", fontFamily: "var(--font-inter)", fontSize: "11px", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
+                            {st.label}
+                          </span>
+                        )}
+                        <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)", flexShrink: 0 }}>{d.area}</div>
                       </div>
-                      <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "#0A0A0A" }}>{d.nome}</div>
-                      <div style={{ fontFamily: "var(--font-inter)", fontSize: "12px", color: "rgba(10,10,10,0.45)", marginLeft: "auto" }}>{d.area}</div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>

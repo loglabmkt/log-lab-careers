@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle, Copy } from "lucide-react";
 import { useWhatsApp, substituirVariaveis } from "../../../hooks/useWhatsApp";
 import { buildVagaData } from "@/utils/vaga";
+import { base44 } from "@/api/base44Client";
 
 function fmtWA(n = "") {
   const d = n.replace(/\D/g, "");
@@ -38,13 +39,30 @@ export default function MensagensStep3({ destinatarios, template, mensagem, vaga
   const handleEnviar = async () => {
     setState("sending");
 
-    // Salvar disparo antes de enviar
-    await onFinish({ status: "enviando" });
+    // Salvar disparo antes de enviar (captura o id para rastrear status por mensagem)
+    const disparo = await onFinish({ status: "enviando" });
+    const disparoId = disparo?.id || null;
 
     const data = await sendDisparo({
       destinatarios: destComVaga,
       conteudo: mensagem,
+      disparoId,
     });
+
+    // Persistir o resultado no registro do disparo
+    if (disparoId) {
+      try {
+        await base44.functions.invoke("updateDisparo", {
+          id: disparoId,
+          status: data.enviados === 0 ? "erro" : "concluido",
+          totalEnviados: data.enviados,
+          totalErros: data.erros,
+          enviadoEm: new Date().toISOString(),
+        });
+      } catch (e) {
+        console.error("[MensagensStep3] Falha ao atualizar disparo:", e);
+      }
+    }
 
     setResultado({
       totalEnviados: data.enviados,

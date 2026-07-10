@@ -1,0 +1,60 @@
+{
+  "name": "EnvioLog",
+  "type": "object",
+  "properties": {
+    "disparoId": {
+      "type": "string",
+      "description": "ID do Disparo (nulo em envio individual)"
+    },
+    "talentoId": {
+      "type": "string",
+      "description": "ID do Talento destinatário"
+    },
+    "nome": {
+      "type": "string",
+      "description": "Snapshot do nome do destinatário"
+    },
+    "whatsapp": {
+      "type": "string",
+      "description": "Número em dígitos (55DDD...)"
+    },
+    "zaapId": {
+      "type": "string",
+      "description": "ID interno do Z-API"
+    },
+    "messageId": {
+      "type": "string",
+      "description": "ID da mensagem no WhatsApp (chave para o webhook de status)"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "enviado",
+        "entregue",
+        "lido",
+        "erro"
+      ],
+      "default": "enviado"
+    },
+    "erro": {
+      "type": "string",
+      "description": "Mensagem de erro, quando status = erro"
+    },
+    "enviadoEm": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "entregueEm": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "lidoEm": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "whatsapp",
+    "status"
+  ]
+}

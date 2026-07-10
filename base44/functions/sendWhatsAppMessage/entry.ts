@@ -38,8 +38,8 @@ Deno.serve(async (req) => {
     }
     logs.push(`Auth: autenticado como ${user.email || user.id}`);
 
-    const { to, message } = await req.json().catch(() => ({}));
-    logs.push(`Input recebido: to=${to}, message=${message ? message.substring(0, 50) + '...' : '(vazio)'}`);
+    const { to, message, disparoId, talentoId, nome } = await req.json().catch(() => ({}));
+    logs.push(`Input recebido: to=${to}, message=${message ? message.substring(0, 50) + '...' : '(vazio)'}, disparoId=${disparoId || '-'}`);
 
     if (!message || !String(message).trim()) {
       logs.push('Validação: message é obrigatório');
@@ -84,14 +84,38 @@ Deno.serve(async (req) => {
     let data;
     try { data = JSON.parse(responseText); } catch { data = { raw: responseText }; }
 
+    // Registra o envio no EnvioLog (falha do log não bloqueia a resposta)
+    const registrarLog = async (fields) => {
+      try {
+        await base44.asServiceRole.entities.EnvioLog.create({
+          disparoId: disparoId || null,
+          talentoId: talentoId || null,
+          nome: nome || null,
+          whatsapp: phone,
+          ...fields,
+        });
+      } catch (logErr) {
+        logs.push(`EnvioLog falhou: ${logErr?.message || logErr}`);
+      }
+    };
+
     if (!response.ok) {
+      const errorMsg = readableError(data, responseText);
+      await registrarLog({ status: 'erro', erro: errorMsg });
       return Response.json({
         success: false,
         logs,
         status: response.status,
-        error: readableError(data, responseText),
+        error: errorMsg,
       });
     }
+
+    await registrarLog({
+      status: 'enviado',
+      zaapId: data.zaapId || null,
+      messageId: data.messageId || null,
+      enviadoEm: new Date().toISOString(),
+    });
 
     return Response.json({
       success: true,

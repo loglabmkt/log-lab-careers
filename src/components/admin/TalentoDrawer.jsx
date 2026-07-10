@@ -37,7 +37,7 @@ export default function TalentoDrawer({ talento, onClose, onUpdate }) {
     setSendResult(null);
 
     const res = await sendIndividual({
-      talento: { nome: talento.nome, whatsapp: talento.whatsapp, area: talento.areaInteresse, email: talento.email },
+      talento: { id: talento.id, nome: talento.nome, whatsapp: talento.whatsapp, area: talento.areaInteresse, email: talento.email },
       conteudo: tpl.conteudo || '',
     });
 
