@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Search, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
-const AREAS = ["Tecnologia", "Design", "Marketing", "Comercial", "Operações", "RH"];
+const AREAS = ["Tecnologia", "Design", "Marketing", "Comercial", "Operações", "RH", "Administrativo", "Outros"];
 const STATUS_OPTS = [
   { value: "novo", label: "Novo" },
   { value: "em_contato", label: "Em contato" },
