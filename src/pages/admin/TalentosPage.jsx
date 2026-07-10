@@ -16,18 +16,22 @@ const STATUS_OPTS = [
 ];
 
 const STATUS_STYLE = {
-  novo: { bg: "rgba(59,130,246,0.15)", color: "#60a5fa" },
-  em_contato: { bg: "rgba(245,184,0,0.15)", color: "#F5B800" },
-  entrevista_agendada: { bg: "rgba(139,92,246,0.15)", color: "#a78bfa" },
-  aprovado: { bg: "rgba(34,197,94,0.15)", color: "#4ade80" },
-  descartado: { bg: "rgba(239,68,68,0.15)", color: "#f87171" },
+  novo: { bg: "rgba(59,130,246,0.12)", color: "#2563eb" },
+  em_contato: { bg: "rgba(245,184,0,0.12)", color: "#b8860b" },
+  entrevista_agendada: { bg: "rgba(139,92,246,0.12)", color: "#7c3aed" },
+  aprovado: { bg: "rgba(34,197,94,0.12)", color: "#15803d" },
+  descartado: { bg: "rgba(239,68,68,0.12)", color: "#dc2626" },
 };
 
 const inputStyle = {
-  background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
-  borderRadius: "8px", padding: "9px 12px", color: "#FFFFFF",
+  background: "rgba(255,255,255,0.7)", border: "1px solid rgba(10,10,10,0.08)",
+  borderRadius: "10px", padding: "9px 12px", color: "#0A0A0A",
   fontFamily: "var(--font-inter)", fontSize: "14px", outline: "none",
+  transition: "border-color 180ms ease, box-shadow 180ms ease",
 };
+
+const focusInput = (e) => { e.currentTarget.style.borderColor = "#F5B800"; e.currentTarget.style.boxShadow = "0 0 0 3px rgba(245,182,0,0.15)"; };
+const blurInput = (e) => { e.currentTarget.style.borderColor = "rgba(10,10,10,0.08)"; e.currentTarget.style.boxShadow = "none"; };
 
 const fmtDate = (d) => d ? format(new Date(d), "dd/MM/yyyy HH:mm", { locale: ptBR }) : "-";
 const fmtWA = (n = "") => {
@@ -107,55 +111,65 @@ export default function TalentosPage() {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "28px" }}>
         <div>
-          <h1 style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "24px", color: "#FFFFFF", margin: 0 }}>Talentos</h1>
-          <p style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(255,255,255,0.5)", margin: "4px 0 0" }}>Gestão de candidatos do banco de talentos</p>
+          <h1 style={{ fontFamily: "var(--font-inter)", fontWeight: 800, fontSize: "24px", color: "#0A0A0A", margin: 0 }}>Talentos</h1>
+          <p style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(10,10,10,0.55)", margin: "4px 0 0" }}>Gestão de candidatos do banco de talentos</p>
         </div>
         {!loading && (
-          <div style={{ background: "rgba(245,184,0,0.15)", color: "#F5B800", borderRadius: "20px", padding: "6px 14px", fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "13px" }}>
+          <div style={{ background: "rgba(255,255,255,0.6)", backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)", border: "1px solid rgba(10,10,10,0.06)", color: "#0A0A0A", borderRadius: "20px", padding: "6px 14px", fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "13px", boxShadow: "0 8px 32px rgba(10,10,10,0.06)" }}>
             {total} cadastro{total !== 1 ? "s" : ""}
           </div>
         )}
       </div>
 
-      <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", marginBottom: "24px" }} />
+      <div style={{ height: "1px", background: "rgba(10,10,10,0.05)", marginBottom: "24px" }} />
 
       {/* Toolbar */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px", flexWrap: "wrap" }}>
         <div style={{ position: "relative" }}>
-          <Search size={15} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "rgba(255,255,255,0.4)" }} />
+          <Search size={15} style={{ position: "absolute", left: "10px", top: "50%", transform: "translateY(-50%)", color: "rgba(10,10,10,0.35)" }} />
           <input
             placeholder="Buscar por nome ou WhatsApp..."
             value={search}
             onChange={e => setSearch(e.target.value)}
+            onFocus={focusInput}
+            onBlur={blurInput}
             style={{ ...inputStyle, paddingLeft: "34px", width: "300px" }}
           />
         </div>
 
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
-          {STATUS_OPTS.map(o => <option key={o.value} value={o.value} style={{ background: "#1a1a1a" }}>{o.label}</option>)}
+        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} onFocus={focusInput} onBlur={blurInput} style={{ ...inputStyle, cursor: "pointer" }}>
+          {STATUS_OPTS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
 
-        <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
-          <option value="" style={{ background: "#1a1a1a" }}>Todas as áreas</option>
-          {areas.map(a => <option key={a} value={a} style={{ background: "#1a1a1a" }}>{a}</option>)}
+        <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} onFocus={focusInput} onBlur={blurInput} style={{ ...inputStyle, cursor: "pointer" }}>
+          <option value="">Todas as áreas</option>
+          {areas.map(a => <option key={a} value={a}>{a}</option>)}
         </select>
 
         <button onClick={handleExportCSV} style={{
-          ...inputStyle, cursor: "pointer", border: "1px solid rgba(255,255,255,0.15)",
+          ...inputStyle, cursor: "pointer", border: "1px solid rgba(10,10,10,0.08)",
+          background: "rgba(255,255,255,0.6)", backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)",
           fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "13px",
-          display: "flex", alignItems: "center", gap: "6px",
-        }}>
+          display: "flex", alignItems: "center", gap: "6px", transition: "all 180ms ease",
+        }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 4px 16px rgba(10,10,10,0.08)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
+        >
           <Download size={14} /> Exportar CSV
         </button>
       </div>
 
       {/* Tabela */}
-      <div style={{ border: "1px solid rgba(255,255,255,0.06)", borderRadius: "12px", overflowX: "auto" }}>
+      <div style={{
+        background: "rgba(255,255,255,0.6)", backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)",
+        border: "1px solid rgba(10,10,10,0.06)", borderRadius: "16px", overflowX: "auto",
+        boxShadow: "0 8px 32px rgba(10,10,10,0.06)",
+      }}>
         <table style={{ width: "100%", minWidth: "900px", borderCollapse: "collapse" }}>
           <thead>
-            <tr style={{ background: "rgba(255,255,255,0.03)" }}>
+            <tr>
               {["Nome", "WhatsApp", "E-mail", "Área", "Data", "Status", "WA", "Ações"].map(h => (
-                <th key={h} style={{ padding: "14px 16px", textAlign: "left", fontFamily: "var(--font-inter)", fontSize: "12px", fontWeight: 600, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.6px", borderBottom: "1px solid rgba(255,255,255,0.06)", whiteSpace: "nowrap" }}>
+                <th key={h} style={{ padding: "14px 16px", textAlign: "left", fontFamily: "var(--font-inter)", fontSize: "11px", fontWeight: 600, color: "rgba(10,10,10,0.45)", textTransform: "uppercase", letterSpacing: "0.6px", borderBottom: "1px solid rgba(10,10,10,0.05)", whiteSpace: "nowrap" }}>
                   {h}
                 </th>
               ))}
@@ -163,14 +177,14 @@ export default function TalentosPage() {
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Carregando...</td></tr>
+              <tr><td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "rgba(10,10,10,0.45)", fontFamily: "var(--font-inter)" }}>Carregando...</td></tr>
             ) : items.length === 0 ? (
-              <tr><td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)" }}>Nenhum talento encontrado.</td></tr>
+              <tr><td colSpan={8} style={{ padding: "48px", textAlign: "center", color: "rgba(10,10,10,0.45)", fontFamily: "var(--font-inter)" }}>Nenhum talento encontrado.</td></tr>
             ) : items.map(t => (
               <tr
                 key={t.id}
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", transition: "background 150ms" }}
-                onMouseEnter={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+                style={{ borderBottom: "1px solid rgba(10,10,10,0.05)", transition: "background 180ms ease" }}
+                onMouseEnter={e => e.currentTarget.style.background = "rgba(245,182,0,0.05)"}
                 onMouseLeave={e => e.currentTarget.style.background = "transparent"}
               >
                 {/* Nome */}
@@ -179,32 +193,32 @@ export default function TalentosPage() {
                     <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#F5B800", color: "#0A0A0A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "13px", flexShrink: 0 }}>
                       {(t.nome || "?")[0].toUpperCase()}
                     </div>
-                    <span style={{ fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "14px", color: "#FFFFFF", whiteSpace: "nowrap" }}>{t.nome}</span>
+                    <span style={{ fontFamily: "var(--font-inter)", fontWeight: 600, fontSize: "14px", color: "#0A0A0A", whiteSpace: "nowrap" }}>{t.nome}</span>
                   </div>
                 </td>
 
                 {/* WhatsApp */}
                 <td style={{ padding: "0 16px" }}>
-                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(255,255,255,0.7)" }}>{fmtWA(t.whatsapp)}</span>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(10,10,10,0.65)" }}>{fmtWA(t.whatsapp)}</span>
                 </td>
 
                 {/* E-mail */}
                 <td style={{ padding: "0 16px" }}>
-                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: t.email ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.2)" }}>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: t.email ? "rgba(10,10,10,0.65)" : "rgba(10,10,10,0.25)" }}>
                     {t.email || "—"}
                   </span>
                 </td>
 
                 {/* Área */}
                 <td style={{ padding: "0 16px" }}>
-                  <span style={{ background: "rgba(245,184,0,0.1)", color: "#F5B800", borderRadius: "20px", padding: "3px 10px", fontFamily: "var(--font-inter)", fontWeight: 500, fontSize: "12px", whiteSpace: "nowrap" }}>
+                  <span style={{ background: "rgba(245,184,0,0.12)", color: "#b8860b", borderRadius: "20px", padding: "3px 10px", fontFamily: "var(--font-inter)", fontWeight: 500, fontSize: "12px", whiteSpace: "nowrap" }}>
                     {t.areaInteresse}
                   </span>
                 </td>
 
                 {/* Data */}
                 <td style={{ padding: "0 16px" }}>
-                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.5)", whiteSpace: "nowrap" }}>
+                  <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.55)", whiteSpace: "nowrap" }}>
                     {fmtDate(t.dataCandidatura || t.created_date)}
                   </span>
                 </td>
@@ -218,43 +232,43 @@ export default function TalentosPage() {
                       background: STATUS_STYLE[t.status]?.bg || STATUS_STYLE.novo.bg,
                       color: STATUS_STYLE[t.status]?.color || STATUS_STYLE.novo.color,
                       border: "none", borderRadius: "20px", padding: "4px 10px",
-                      fontFamily: "var(--font-inter)", fontSize: "12px", fontWeight: 500,
+                      fontFamily: "var(--font-inter)", fontSize: "12px", fontWeight: 600,
                       cursor: "pointer", outline: "none",
                     }}
                   >
-                    <option value="novo" style={{ background: "#1a1a1a", color: "#fff" }}>Novo</option>
-                    <option value="em_contato" style={{ background: "#1a1a1a", color: "#fff" }}>Em contato</option>
-                    <option value="entrevista_agendada" style={{ background: "#1a1a1a", color: "#fff" }}>Entrevista agendada</option>
-                    <option value="aprovado" style={{ background: "#1a1a1a", color: "#fff" }}>Aprovado</option>
-                    <option value="descartado" style={{ background: "#1a1a1a", color: "#fff" }}>Descartado</option>
+                    <option value="novo">Novo</option>
+                    <option value="em_contato">Em contato</option>
+                    <option value="entrevista_agendada">Entrevista agendada</option>
+                    <option value="aprovado">Aprovado</option>
+                    <option value="descartado">Descartado</option>
                   </select>
                 </td>
 
                 {/* Aceita WA */}
                 <td style={{ padding: "0 16px", textAlign: "center" }}>
                   {t.aceitaWhatsapp
-                    ? <Check size={16} color="#4ade80" />
-                    : <X size={16} color="rgba(255,255,255,0.25)" />}
+                    ? <Check size={16} color="#15803d" />
+                    : <X size={16} color="rgba(10,10,10,0.25)" />}
                 </td>
 
                 {/* Ações */}
                 <td style={{ padding: "0 16px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <button onClick={() => setDrawer(t)} title="Ver detalhes" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: "4px" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "#FFFFFF"}
-                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+                    <button onClick={() => setDrawer(t)} title="Ver detalhes" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(10,10,10,0.45)", padding: "4px", transition: "color 180ms ease" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "#0A0A0A"}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(10,10,10,0.45)"}
                     >
                       <Eye size={16} />
                     </button>
-                    <button onClick={() => setEditTalento(t)} title="Editar" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: "4px" }}
+                    <button onClick={() => setEditTalento(t)} title="Editar" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(10,10,10,0.45)", padding: "4px", transition: "color 180ms ease" }}
                       onMouseEnter={e => e.currentTarget.style.color = "#F5B800"}
-                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(10,10,10,0.45)"}
                     >
                       <Pencil size={16} />
                     </button>
-                    <button onClick={() => setDeleteConfirm(t.id)} title="Excluir" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: "4px" }}
-                      onMouseEnter={e => e.currentTarget.style.color = "#f87171"}
-                      onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+                    <button onClick={() => setDeleteConfirm(t.id)} title="Excluir" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(10,10,10,0.45)", padding: "4px", transition: "color 180ms ease" }}
+                      onMouseEnter={e => e.currentTarget.style.color = "#dc2626"}
+                      onMouseLeave={e => e.currentTarget.style.color = "rgba(10,10,10,0.45)"}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -272,7 +286,7 @@ export default function TalentosPage() {
           <button disabled={page === 1} onClick={() => load(page - 1)} style={{ ...inputStyle, cursor: page === 1 ? "default" : "pointer", opacity: page === 1 ? 0.4 : 1, padding: "8px 14px", fontSize: "13px" }}>
             Anterior
           </button>
-          <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.5)", padding: "0 8px" }}>
+          <span style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(10,10,10,0.55)", padding: "0 8px" }}>
             {page} / {pages}
           </span>
           <button disabled={page === pages} onClick={() => load(page + 1)} style={{ ...inputStyle, cursor: page === pages ? "default" : "pointer", opacity: page === pages ? 0.4 : 1, padding: "8px 14px", fontSize: "13px" }}>
@@ -283,13 +297,17 @@ export default function TalentosPage() {
 
       {/* Delete confirm */}
       {deleteConfirm && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <div style={{ background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", padding: "28px", width: "360px" }}>
-            <h3 style={{ fontFamily: "var(--font-inter)", fontWeight: 700, fontSize: "17px", color: "#FFFFFF", marginBottom: "8px" }}>Excluir talento?</h3>
-            <p style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(255,255,255,0.5)", marginBottom: "24px" }}>Esta ação não pode ser desfeita.</p>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(10,10,10,0.25)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)", zIndex: 60, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{
+            background: "rgba(255,255,255,0.9)", backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)",
+            border: "1px solid rgba(10,10,10,0.06)", borderRadius: "16px", padding: "28px", width: "360px",
+            boxShadow: "0 8px 32px rgba(10,10,10,0.12)",
+          }}>
+            <h3 style={{ fontFamily: "var(--font-inter)", fontWeight: 800, fontSize: "17px", color: "#0A0A0A", marginBottom: "8px" }}>Excluir talento?</h3>
+            <p style={{ fontFamily: "var(--font-inter)", fontSize: "14px", color: "rgba(10,10,10,0.55)", marginBottom: "24px" }}>Esta ação não pode ser desfeita.</p>
             <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, padding: "10px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", color: "#FFFFFF", fontFamily: "var(--font-inter)", cursor: "pointer" }}>Cancelar</button>
-              <button onClick={() => handleDelete(deleteConfirm)} style={{ flex: 1, padding: "10px", background: "rgba(239,68,68,0.2)", border: "1px solid rgba(239,68,68,0.4)", borderRadius: "8px", color: "#f87171", fontFamily: "var(--font-inter)", fontWeight: 600, cursor: "pointer" }}>Excluir</button>
+              <button onClick={() => setDeleteConfirm(null)} style={{ flex: 1, padding: "10px", background: "rgba(255,255,255,0.6)", border: "1px solid rgba(10,10,10,0.08)", borderRadius: "10px", color: "#0A0A0A", fontFamily: "var(--font-inter)", fontWeight: 500, cursor: "pointer", transition: "all 180ms ease" }}>Cancelar</button>
+              <button onClick={() => handleDelete(deleteConfirm)} style={{ flex: 1, padding: "10px", background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: "10px", color: "#dc2626", fontFamily: "var(--font-inter)", fontWeight: 600, cursor: "pointer", transition: "all 180ms ease" }}>Excluir</button>
             </div>
           </div>
         </div>

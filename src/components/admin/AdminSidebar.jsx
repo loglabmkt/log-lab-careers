@@ -18,15 +18,21 @@ export default function AdminSidebar({ user }) {
   return (
     <aside style={{
       width: "240px", flexShrink: 0, height: "100vh", position: "sticky", top: 0,
-      background: "#0A0A0A", borderRight: "1px solid rgba(255,255,255,0.08)",
+      background: "rgba(255,255,255,0.6)",
+      backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)",
+      borderRight: "1px solid rgba(10,10,10,0.06)",
+      boxShadow: "0 8px 32px rgba(10,10,10,0.04)",
       display: "flex", flexDirection: "column", padding: "28px 16px",
+      zIndex: 1,
     }}>
       {/* Logo */}
       <div style={{ marginBottom: "40px", paddingLeft: "8px" }}>
-        <div style={{ fontFamily: "var(--font-inter)", fontWeight: 900, fontSize: "22px", color: "#FFFFFF" }}>
-          log.<span style={{ color: "#F5B800" }}>lab.</span>
-        </div>
-        <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "2px" }}>
+        <img
+          src="https://www.loglabdigital.com.br/wp-content/uploads/2026/07/log_full_black.svg"
+          alt="Log Lab"
+          style={{ height: "30px", width: "auto", display: "block" }}
+        />
+        <div style={{ fontFamily: "var(--font-inter)", fontSize: "11px", color: "rgba(10,10,10,0.45)", marginTop: "6px" }}>
           Portal Administrativo
         </div>
       </div>
@@ -41,15 +47,15 @@ export default function AdminSidebar({ user }) {
               to={path}
               style={{
                 display: "flex", alignItems: "center", gap: "10px",
-                padding: "12px 16px", borderRadius: "8px", marginBottom: "4px",
+                padding: "12px 16px", borderRadius: "10px", marginBottom: "4px",
                 textDecoration: "none", transition: "all 180ms ease",
                 borderLeft: active ? "3px solid #F5B800" : "3px solid transparent",
-                background: active ? "rgba(245,184,0,0.12)" : "transparent",
-                color: active ? "#F5B800" : "rgba(255,255,255,0.5)",
-                fontFamily: "var(--font-inter)", fontWeight: 500, fontSize: "14px",
+                background: active ? "rgba(245,182,0,0.15)" : "transparent",
+                color: active ? "#0A0A0A" : "rgba(10,10,10,0.6)",
+                fontFamily: "var(--font-inter)", fontWeight: active ? 600 : 500, fontSize: "14px",
               }}
-              onMouseEnter={e => { if (!active) { e.currentTarget.style.background = "rgba(255,255,255,0.05)"; e.currentTarget.style.color = "#FFFFFF"; }}}
-              onMouseLeave={e => { if (!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}}
+              onMouseEnter={e => { if (!active) { e.currentTarget.style.background = "rgba(10,10,10,0.04)"; e.currentTarget.style.color = "#0A0A0A"; }}}
+              onMouseLeave={e => { if (!active) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "rgba(10,10,10,0.6)"; }}}
             >
               <Icon size={16} />
               {label}
@@ -57,12 +63,12 @@ export default function AdminSidebar({ user }) {
           );
         })}
 
-        <div style={{ height: "1px", background: "rgba(255,255,255,0.08)", margin: "16px 0" }} />
+        <div style={{ height: "1px", background: "rgba(10,10,10,0.06)", margin: "16px 0" }} />
 
         <div style={{
           display: "flex", alignItems: "center", gap: "10px",
-          padding: "12px 16px", borderRadius: "8px",
-          color: "rgba(255,255,255,0.25)", fontFamily: "var(--font-inter)", fontSize: "14px",
+          padding: "12px 16px", borderRadius: "10px",
+          color: "rgba(10,10,10,0.3)", fontFamily: "var(--font-inter)", fontSize: "14px",
           cursor: "not-allowed",
         }}>
           <Settings size={16} />
@@ -72,7 +78,7 @@ export default function AdminSidebar({ user }) {
 
       {/* User footer */}
       <div style={{
-        borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "16px",
+        borderTop: "1px solid rgba(10,10,10,0.06)", paddingTop: "16px",
         display: "flex", alignItems: "center", gap: "10px",
       }}>
         <div style={{
@@ -84,13 +90,13 @@ export default function AdminSidebar({ user }) {
           {(user?.full_name || user?.email || "A")[0].toUpperCase()}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "#FFFFFF", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+          <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "#0A0A0A", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {user?.full_name || user?.email}
           </div>
         </div>
-        <button onClick={handleLogout} title="Sair" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.4)", padding: "4px" }}
-          onMouseEnter={e => e.currentTarget.style.color = "#f87171"}
-          onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.4)"}
+        <button onClick={handleLogout} title="Sair" style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(10,10,10,0.4)", padding: "4px", transition: "color 180ms ease" }}
+          onMouseEnter={e => e.currentTarget.style.color = "#dc2626"}
+          onMouseLeave={e => e.currentTarget.style.color = "rgba(10,10,10,0.4)"}
         >
           <LogOut size={16} />
         </button>
