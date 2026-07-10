@@ -5,7 +5,8 @@ import { buildVagaData } from "@/utils/vaga";
 import { base44 } from "@/api/base44Client";
 
 function fmtWA(n = "") {
-  const d = n.replace(/\D/g, "");
+  let d = n.replace(/\D/g, "");
+  if ((d.length === 12 || d.length === 13) && d.startsWith("55")) d = d.slice(2);
   if (d.length === 11) return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`;
   if (d.length === 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
   return n;
