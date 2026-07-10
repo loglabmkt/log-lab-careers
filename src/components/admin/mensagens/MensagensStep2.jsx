@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { useInHireJobs } from "@/hooks/useInHireJobs";
+import { substituirVariaveis } from "@/hooks/useWhatsApp";
+import { buildVagaData, hasVagaVariables } from "@/utils/vaga";
 
 const EXEMPLOS = {
   "[Nome]": "João Silva", "[Area]": "Tecnologia", "[NomeVaga]": "Dev Front-end",
-  "[LinkVaga]": "https://loglab.com/vagas/123", "[Modalidade]": "Remoto",
+  "[LinkVaga]": "https://loglab.com/vagas/123", "[Modalidade]": "Remoto", "[Cidade]": "Cuiabá",
   "[LinkSite]": "https://loglab.com/carreiras", "[Data]": "10/06/2025", "[Hora]": "14:00",
 };
 const VARIAVEIS = Object.keys(EXEMPLOS);
@@ -20,6 +23,8 @@ export default function MensagensStep2({ destinatarios, initialTemplateId, onNex
   const [customMode, setCustomMode] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(true);
+  const [vagaSel, setVagaSel] = useState(null);
+  const { jobs: vagas, loading: loadingVagas } = useInHireJobs();
 
   useEffect(() => {
     base44.functions.invoke("getTemplates", {}).then(res => {
@@ -39,12 +44,17 @@ export default function MensagensStep2({ destinatarios, initialTemplateId, onNex
     setCustomMode(false);
   };
 
-  const preview = mensagem.replace(/\[([^\]]+)\]/g, (match) => EXEMPLOS[match] || match);
   const firstDest = destinatarios[0];
+  const previewDest = {
+    nome: firstDest?.nome || "João",
+    area: firstDest?.area || "Tecnologia",
+    ...(vagaSel ? buildVagaData(vagaSel) : {}),
+  };
+  const preview = substituirVariaveis(mensagem, previewDest);
 
   const handleNext = () => {
     if (!mensagem.trim()) return;
-    onNext(customMode ? null : selTemplate, mensagem);
+    onNext(customMode ? null : selTemplate, mensagem, vagaSel);
   };
 
   return (
@@ -95,6 +105,33 @@ export default function MensagensStep2({ destinatarios, initialTemplateId, onNex
         </div>
       )}
 
+      {/* Seletor de vaga */}
+      {hasVagaVariables(mensagem) && (
+        <div style={{ marginBottom: "24px" }}>
+          <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "8px" }}>
+            Selecione a vaga (preenche Vaga, Local, Modalidade e Link no envio):
+          </div>
+          {loadingVagas ? (
+            <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)", fontSize: "13px" }}>Carregando vagas...</p>
+          ) : vagas.length === 0 ? (
+            <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "var(--font-inter)", fontSize: "13px" }}>Nenhuma vaga aberta no momento.</p>
+          ) : (
+            <select
+              value={vagaSel?.id || ""}
+              onChange={e => { const j = vagas.find(v => v.id === e.target.value); setVagaSel(j || null); }}
+              style={{ width: "100%", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "8px", padding: "10px 12px", color: "#FFFFFF", fontFamily: "var(--font-inter)", fontSize: "14px", outline: "none", cursor: "pointer" }}
+            >
+              <option value="" style={{ background: "#1a1a1a" }}>— Selecione uma vaga —</option>
+              {vagas.map(v => (
+                <option key={v.id} value={v.id} style={{ background: "#1a1a1a" }}>
+                  {v.title || v.name}{v.city ? ` · ${v.city}` : ""}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
+
       {/* Preview WhatsApp */}
       {mensagem && (
         <div style={{ marginBottom: "24px" }}>
@@ -103,7 +140,7 @@ export default function MensagensStep2({ destinatarios, initialTemplateId, onNex
           </div>
           <div style={{ background: "#075e54", borderRadius: "12px", padding: "16px" }}>
             <div style={{ background: "#dcf8c6", borderRadius: "8px", padding: "12px 14px", maxWidth: "85%", marginLeft: "auto", fontFamily: "var(--font-inter)", fontSize: "13px", color: "#111", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
-              {mensagem.replace(/\[Nome\]/g, firstDest?.nome || "João").replace(/\[Area\]/g, firstDest?.area || "Tecnologia").replace(/\[([^\]]+)\]/g, m => EXEMPLOS[m] || m)}
+              {preview}
             </div>
           </div>
         </div>

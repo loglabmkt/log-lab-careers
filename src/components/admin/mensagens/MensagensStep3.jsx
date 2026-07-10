@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, CheckCircle2, AlertTriangle, XCircle, Copy } from "lucide-react";
 import { useWhatsApp, substituirVariaveis } from "../../../hooks/useWhatsApp";
+import { buildVagaData } from "@/utils/vaga";
 
 function fmtWA(n = "") {
   const d = n.replace(/\D/g, "");
@@ -9,12 +10,15 @@ function fmtWA(n = "") {
   return n;
 }
 
-export default function MensagensStep3({ destinatarios, template, mensagem, onBack, onFinish }) {
+export default function MensagensStep3({ destinatarios, template, mensagem, vaga, onBack, onFinish }) {
   const [state, setState] = useState("idle"); // idle | sending | done | error
   const [resultado, setResultado] = useState(null);
   const [saving, setSaving] = useState(false);
   const { sendDisparo, progress: waProgress } = useWhatsApp();
   const progress = waProgress.total > 0 ? Math.round((waProgress.atual / waProgress.total) * 100) : 0;
+
+  const vagaData = vaga ? buildVagaData(vaga) : null;
+  const destComVaga = vagaData ? destinatarios.map(d => ({ ...d, ...vagaData })) : destinatarios;
 
   const personalizar = (dest) => substituirVariaveis(mensagem, dest);
 
@@ -31,7 +35,7 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
     await onFinish({ status: "enviando" });
 
     const data = await sendDisparo({
-      destinatarios,
+      destinatarios: destComVaga,
       conteudo: mensagem,
     });
 
@@ -172,7 +176,7 @@ export default function MensagensStep3({ destinatarios, template, mensagem, onBa
         <div style={{ fontFamily: "var(--font-inter)", fontSize: "13px", color: "rgba(255,255,255,0.4)", marginBottom: "10px" }}>Preview da mensagem:</div>
         <div style={{ background: "#075e54", borderRadius: "12px", padding: "16px" }}>
           <div style={{ background: "#dcf8c6", borderRadius: "8px", padding: "12px 14px", maxWidth: "85%", marginLeft: "auto", fontFamily: "var(--font-inter)", fontSize: "13px", color: "#111", whiteSpace: "pre-wrap", lineHeight: "1.6" }}>
-            {destinatarios[0] ? personalizar(destinatarios[0]) : mensagem}
+            {destComVaga[0] ? personalizar(destComVaga[0]) : mensagem}
           </div>
         </div>
       </div>

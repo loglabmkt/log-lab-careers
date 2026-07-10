@@ -14,6 +14,7 @@ export default function MensagensPage() {
   const [destinatarios, setDestinatarios] = useState([]);
   const [template, setTemplate] = useState(null);
   const [mensagem, setMensagem] = useState("");
+  const [vaga, setVaga] = useState(null);
   const [disparos, setDisparos] = useState([]);
   const [loadingDisparos, setLoadingDisparos] = useState(true);
   const [refresh, setRefresh] = useState(0);
@@ -46,6 +47,7 @@ export default function MensagensPage() {
       setDestinatarios([]);
       setTemplate(null);
       setMensagem("");
+      setVaga(null);
     }
     return res.data;
   };
@@ -101,7 +103,7 @@ export default function MensagensPage() {
         <MensagensStep2
           destinatarios={destinatarios}
           initialTemplateId={location.state?.templateId}
-          onNext={(tpl, msg) => { setTemplate(tpl); setMensagem(msg); setStep(3); }}
+          onNext={(tpl, msg, vg) => { setTemplate(tpl); setMensagem(msg); setVaga(vg); setStep(3); }}
           onBack={() => setStep(1)}
         />
       )}
@@ -110,6 +112,7 @@ export default function MensagensPage() {
           destinatarios={destinatarios}
           template={template}
           mensagem={mensagem}
+          vaga={vaga}
           onBack={() => setStep(2)}
           onFinish={handleFinish}
         />
